@@ -19,19 +19,19 @@ namespace SpaceTraders
             this.m_Renderer.setClearColor(new THREE.Color(0x000000));
 
             const container = document.createElement( 'div' );
-            document.body.appendChild( container );            
+            document.body.appendChild( container );
             container.appendChild( this.m_Renderer.domElement );
 
             this.m_Camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
             this.m_Camera.position.set( 0, 0, 200 );
 
             this.m_Scene = new THREE.Scene();
-            this.m_Scene.background = new THREE.Color( 0x000000 );
+            this.m_Scene.background = new THREE.Color( 0x101010 );
             this.m_Scene.fog = new THREE.Fog( 0x0000a0, 50, 300 );
 
             this.InitLighting();
             this.InitTestScene();
-           
+
            window.addEventListener( 'resize', this.onResize );
 
            this.Render();
@@ -39,12 +39,12 @@ namespace SpaceTraders
 
         private InitLighting()
         {
-            const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444 );
+            const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444);
             hemiLight.position.set( 0, 200, 0 );
             this.m_Scene.add( hemiLight );
 
             const dirLight = new THREE.DirectionalLight( 0xffffff );
-            dirLight.position.set( 100, 200, 200 );
+            dirLight.position.set( 100, 200, 200);
             this.m_Scene.add( dirLight );
         }
 
@@ -59,8 +59,8 @@ namespace SpaceTraders
                 scene.add( object );
             } );
             */
-            
-            for(let i = 0; i < 10; ++i)
+
+            for(let i = 0; i < 7; ++i)
             {
                 const colorVal = new THREE.Color(Math.random(), Math.random(), Math.random());
                 const pos = new THREE.Vector3(Math.random()-0.5, Math.random()-0.5, Math.random()-0.5);
