@@ -3,18 +3,18 @@ namespace SpaceTraders
     export class Game
     {
         public m_Scene: SceneRenderer;
-        public model: Model;
+        public network: Network;
 
         public constructor()
         {
             this.m_Scene = new SceneRenderer();
-            this.model = new Model();
+            this.network = new Network();
         }
 
         public Init() : void
         {
             this.m_Scene.Init();
-            this.model.Init();
+            this.network.Init();
         }
     }
 }

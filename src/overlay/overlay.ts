@@ -1,6 +1,6 @@
 namespace SpaceTraders
 {
-    export class View
+    export class Overlay
     {
         public constructor()
         {

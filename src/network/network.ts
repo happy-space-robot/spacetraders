@@ -1,19 +1,19 @@
 namespace SpaceTraders
 {
-    export class Model
+    export class Network
     {
 
-        public view: View;
+        public overlay: Overlay;
 
         public constructor()
         {
-          this.view = new View;
+          this.overlay = new Overlay;
           this.getStatus = this.getStatus.bind(this);
         }
 
         public Init() : void
         {
-          this.getStatus((status: string) => this.view.createStatusView(status));
+          this.getStatus((status: string) => this.overlay.createStatusView(status));
         }
 
         public getStatus(callback: Function) : Promise<any> {
