@@ -5,16 +5,23 @@ namespace SpaceTraders
         private m_Scene: THREE.Scene
         private m_Camera: THREE.PerspectiveCamera;
         private m_Renderer: THREE.WebGLRenderer;
+        private m_Viewport = new THREE.Box2();
+
+        public static get Instance() { return this.s_Instance; }
+        private static s_Instance: SceneRenderer;
+
+        public get Camera() : THREE.PerspectiveCamera { return this.m_Camera; }
 
         public constructor()
         {
-            this.onResize = this.onResize.bind(this);
+            console.assert(SceneRenderer.s_Instance == null);
+            SceneRenderer.s_Instance = this;            
         }
 
         public Init() : void
         {
             this.m_Renderer = new THREE.WebGLRenderer({ antialias: true });
-			this.m_Renderer.setPixelRatio( window.devicePixelRatio );
+			//this.m_Renderer.setPixelRatio( window.devicePixelRatio );
             this.m_Renderer.setSize( window.innerWidth, window.innerHeight );
             this.m_Renderer.setClearColor(new THREE.Color(0x000000));
 
@@ -30,11 +37,11 @@ namespace SpaceTraders
             this.m_Scene.fog = new THREE.Fog( 0x0000a0, 50, 300 );
 
             this.InitLighting();
-            this.InitTestScene();
+        }
 
-           window.addEventListener( 'resize', this.onResize );
-
-           this.Render();
+        public AddToScene(object: THREE.Object3D)
+        {
+            this.m_Scene.add(object);
         }
 
         private InitLighting()
@@ -48,33 +55,7 @@ namespace SpaceTraders
             this.m_Scene.add( dirLight );
         }
 
-        private InitTestScene()
-        {
-            /* Not working yet
-
-            const loader = new THREE.FBXLoader();
-            let scene = this.m_Scene;
-            loader.load( 'data/models/TestPlanet.fbx', function ( object : THREE.Object3D )
-            {
-                scene.add( object );
-            } );
-            */
-
-            for(let i = 0; i < 7; ++i)
-            {
-                const colorVal = new THREE.Color(Math.random(), Math.random(), Math.random());
-                const pos = new THREE.Vector3(Math.random()-0.5, Math.random()-0.5, Math.random()-0.5);
-                pos.multiplyScalar(100);
-
-                const geometry = new THREE.SphereGeometry( 5, 32, 32 );
-                const material = new THREE.MeshPhongMaterial( {color: colorVal} );
-                const sphere = new THREE.Mesh( geometry, material );
-                sphere.position.set(pos.x, pos.y, pos.z);
-                this.m_Scene.add( sphere );
-            }
-        }
-
-        private onResize() : void
+        public OnResize() : void
         {
             const canvasWidth = window.innerWidth;
             const canvasHeight = window.innerHeight;
@@ -83,14 +64,38 @@ namespace SpaceTraders
 
             this.m_Camera.aspect = canvasWidth / canvasHeight;
             this.m_Camera.updateProjectionMatrix();
-
-            this.Render();
-
         }
 
-        private Render()
+        public Render()
         {
             this.m_Renderer.render(this.m_Scene, this.m_Camera);
+        }
+
+        public DisplayToClipPos(displayPos : THREE.Vector2) : THREE.Vector2
+        {
+            let viewportPos = this.DisplayToViewportPos(displayPos);
+            return this.ViewportToClipPos(viewportPos);
+        }
+
+        public DisplayToViewportPos(displayPos : THREE.Vector2) : THREE.Vector2
+        {
+            let viewport = new THREE.Vector4();
+            this.m_Renderer.getCurrentViewport(viewport)
+
+            let x = displayPos.x * this.m_Renderer.getPixelRatio() - viewport.x;
+            let y = displayPos.y * this.m_Renderer.getPixelRatio() - viewport.y;
+            return new THREE.Vector2(x,y);
+        }
+    
+        public ViewportToClipPos(viewportPos : THREE.Vector2) : THREE.Vector2
+        {
+            let viewport = new THREE.Vector4();
+            this.m_Renderer.getCurrentViewport(viewport)
+
+            var clipPos = new THREE.Vector2();
+            clipPos.x = (viewportPos.x / viewport.width) * 2 - 1;
+            clipPos.y = -(viewportPos.y / viewport.height) * 2 + 1;
+            return clipPos;
         }
     }
 }
