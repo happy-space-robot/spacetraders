@@ -2,13 +2,14 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "typescript",
-			"tsconfig": "tsconfig.json",
+			"type": "npm",
+			"script": "build",
 			"problemMatcher": [
 				"$tsc"
 			],
 			"group": "build",
-			"label": "tsc: build - tsconfig.json"
+			"label": "npm: build",
+			"detail": "rollup -c"
 		}
 	]
 }
