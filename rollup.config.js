@@ -1,5 +1,5 @@
-import serve from 'rollup-plugin-serve'
-import livereload from 'rollup-plugin-livereload'
+// import serve from 'rollup-plugin-serve'
+// import livereload from 'rollup-plugin-livereload'
 // import babel from '@rollup/plugin-babel';
 import typescript from '@rollup/plugin-typescript';
 import del from 'rollup-plugin-delete'
@@ -10,8 +10,6 @@ import commonjs from '@rollup/plugin-commonjs';
 import replace from '@rollup/plugin-replace';
 import nodePolyFills from 'rollup-plugin-node-polyfills';
 import { terser } from 'rollup-plugin-terser';
-
-
 
 export default {
   input: 'src/main.ts',
@@ -44,16 +42,16 @@ export default {
     //   presets: ["@babel/preset-react"]
     // }),
     commonjs(),
-    nodePolyFills(),
-    serve({
-      open: true,
-      verbose: true,
-      contentBase: ["", "dist"],
-      host: "localhost",
-      port: 3000,
-    }),
-    livereload({
-      watch: "dist"
-    })
+    nodePolyFills()
+    // serve({
+    //   open: true,
+    //   verbose: true,
+    //   contentBase: ["", "dist"],
+    //   host: "localhost",
+    //   port: 3000,
+    // }),
+    // livereload({
+    //   watch: "dist"
+    // })
   ]
 };
