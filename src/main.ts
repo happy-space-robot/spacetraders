@@ -1,3 +1,4 @@
-let game = new SpaceTraders.Game();
+import game from './app/Game'
 
-game.Init();
+const spacetradersgame = new game;
+spacetradersgame.Init();

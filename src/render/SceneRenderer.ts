@@ -1,101 +1,100 @@
-namespace SpaceTraders
+import * as THREE from 'three';
+
+export default class SceneRenderer
 {
-    export class SceneRenderer
+    private m_Scene: THREE.Scene
+    private m_Camera: THREE.PerspectiveCamera;
+    private m_Renderer: THREE.WebGLRenderer;
+    private m_Viewport = new THREE.Box2();
+
+    public static get Instance() { return this.s_Instance; }
+    private static s_Instance: SceneRenderer;
+
+    public get Camera() : THREE.PerspectiveCamera { return this.m_Camera; }
+
+    public constructor()
     {
-        private m_Scene: THREE.Scene
-        private m_Camera: THREE.PerspectiveCamera;
-        private m_Renderer: THREE.WebGLRenderer;
-        private m_Viewport = new THREE.Box2();
+        console.assert(SceneRenderer.s_Instance == null);
+        SceneRenderer.s_Instance = this;
+    }
 
-        public static get Instance() { return this.s_Instance; }
-        private static s_Instance: SceneRenderer;
+    public Init() : void
+    {
+        this.m_Renderer = new THREE.WebGLRenderer({ antialias: true });
+        //this.m_Renderer.setPixelRatio( window.devicePixelRatio );
+        this.m_Renderer.setSize( window.innerWidth, window.innerHeight );
+        this.m_Renderer.setClearColor(new THREE.Color(0x000000));
 
-        public get Camera() : THREE.PerspectiveCamera { return this.m_Camera; }
+        const container = document.createElement( 'div' );
+        document.body.appendChild( container );
+        container.appendChild( this.m_Renderer.domElement );
 
-        public constructor()
-        {
-            console.assert(SceneRenderer.s_Instance == null);
-            SceneRenderer.s_Instance = this;            
-        }
+        this.m_Camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
+        this.m_Camera.position.set( 0, 0, 200 );
 
-        public Init() : void
-        {
-            this.m_Renderer = new THREE.WebGLRenderer({ antialias: true });
-			//this.m_Renderer.setPixelRatio( window.devicePixelRatio );
-            this.m_Renderer.setSize( window.innerWidth, window.innerHeight );
-            this.m_Renderer.setClearColor(new THREE.Color(0x000000));
+        this.m_Scene = new THREE.Scene();
+        this.m_Scene.background = new THREE.Color( 0x101010 );
+        this.m_Scene.fog = new THREE.Fog( 0x0000a0, 50, 300 );
 
-            const container = document.createElement( 'div' );
-            document.body.appendChild( container );
-            container.appendChild( this.m_Renderer.domElement );
+        this.InitLighting();
+    }
 
-            this.m_Camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
-            this.m_Camera.position.set( 0, 0, 200 );
+    public AddToScene(object: THREE.Object3D)
+    {
+        this.m_Scene.add(object);
+    }
 
-            this.m_Scene = new THREE.Scene();
-            this.m_Scene.background = new THREE.Color( 0x101010 );
-            this.m_Scene.fog = new THREE.Fog( 0x0000a0, 50, 300 );
+    private InitLighting()
+    {
+        const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444);
+        hemiLight.position.set( 0, 200, 0 );
+        this.m_Scene.add( hemiLight );
 
-            this.InitLighting();
-        }
+        const dirLight = new THREE.DirectionalLight( 0xffffff );
+        dirLight.position.set( 100, 200, 200);
+        this.m_Scene.add( dirLight );
+    }
 
-        public AddToScene(object: THREE.Object3D)
-        {
-            this.m_Scene.add(object);
-        }
+    public OnResize() : void
+    {
+        const canvasWidth = window.innerWidth;
+        const canvasHeight = window.innerHeight;
 
-        private InitLighting()
-        {
-            const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444);
-            hemiLight.position.set( 0, 200, 0 );
-            this.m_Scene.add( hemiLight );
+        this.m_Renderer.setSize( canvasWidth, canvasHeight );
 
-            const dirLight = new THREE.DirectionalLight( 0xffffff );
-            dirLight.position.set( 100, 200, 200);
-            this.m_Scene.add( dirLight );
-        }
+        this.m_Camera.aspect = canvasWidth / canvasHeight;
+        this.m_Camera.updateProjectionMatrix();
+    }
 
-        public OnResize() : void
-        {
-            const canvasWidth = window.innerWidth;
-            const canvasHeight = window.innerHeight;
+    public Render()
+    {
+        this.m_Renderer.render(this.m_Scene, this.m_Camera);
+    }
 
-            this.m_Renderer.setSize( canvasWidth, canvasHeight );
+    public DisplayToClipPos(displayPos : THREE.Vector2) : THREE.Vector2
+    {
+        let viewportPos = this.DisplayToViewportPos(displayPos);
+        return this.ViewportToClipPos(viewportPos);
+    }
 
-            this.m_Camera.aspect = canvasWidth / canvasHeight;
-            this.m_Camera.updateProjectionMatrix();
-        }
+    public DisplayToViewportPos(displayPos : THREE.Vector2) : THREE.Vector2
+    {
+        let viewport = new THREE.Vector4();
+        this.m_Renderer.getCurrentViewport(viewport)
 
-        public Render()
-        {
-            this.m_Renderer.render(this.m_Scene, this.m_Camera);
-        }
+        let x = displayPos.x * this.m_Renderer.getPixelRatio() - viewport.x;
+        let y = displayPos.y * this.m_Renderer.getPixelRatio() - viewport.y;
+        return new THREE.Vector2(x,y);
+    }
 
-        public DisplayToClipPos(displayPos : THREE.Vector2) : THREE.Vector2
-        {
-            let viewportPos = this.DisplayToViewportPos(displayPos);
-            return this.ViewportToClipPos(viewportPos);
-        }
+    public ViewportToClipPos(viewportPos : THREE.Vector2) : THREE.Vector2
+    {
+        let viewport = new THREE.Vector4();
+        this.m_Renderer.getCurrentViewport(viewport)
 
-        public DisplayToViewportPos(displayPos : THREE.Vector2) : THREE.Vector2
-        {
-            let viewport = new THREE.Vector4();
-            this.m_Renderer.getCurrentViewport(viewport)
-
-            let x = displayPos.x * this.m_Renderer.getPixelRatio() - viewport.x;
-            let y = displayPos.y * this.m_Renderer.getPixelRatio() - viewport.y;
-            return new THREE.Vector2(x,y);
-        }
-    
-        public ViewportToClipPos(viewportPos : THREE.Vector2) : THREE.Vector2
-        {
-            let viewport = new THREE.Vector4();
-            this.m_Renderer.getCurrentViewport(viewport)
-
-            var clipPos = new THREE.Vector2();
-            clipPos.x = (viewportPos.x / viewport.width) * 2 - 1;
-            clipPos.y = -(viewportPos.y / viewport.height) * 2 + 1;
-            return clipPos;
-        }
+        var clipPos = new THREE.Vector2();
+        clipPos.x = (viewportPos.x / viewport.width) * 2 - 1;
+        clipPos.y = -(viewportPos.y / viewport.height) * 2 + 1;
+        return clipPos;
     }
 }
