@@ -2,7 +2,7 @@ body, html {
   margin: 0px;
   padding: 0px;
   width: 100%;
-  height: 100%
+  height: 100%;
 }
 
 .app {
@@ -13,6 +13,7 @@ body, html {
 
 .overlay {
   z-index: 100;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .title-page-outside-container {
@@ -25,7 +26,6 @@ body, html {
   position: absolute;
   top: 0px;
   left: 0px;
-
 }
 
 .title-page-inside-container {
@@ -47,10 +47,6 @@ body, html {
   margin-top: 20px;
 }
 
-.title-banner {
-
-}
-
 .title-menu-outside-container {
   grid-column: 2;
   grid-row: 2;
@@ -67,6 +63,35 @@ body, html {
   border-color: green;
   border-radius: 20px;
   border-width: 2px;
+  text-align: center;
+}
+
+.title-menu-inside-container ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.title-menu-inside-container ul :last-child{
+  margin-bottom: 10px;
+}
+
+.title-menu-inside-container button {
+  margin-top: 10px;
+  background-color: black;
+  border: 2px solid green;
+  border-radius: 8px;
+  color: green;
+  padding: 1em;
+  font-size: 16px;
+  width: 12em;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 900;
+}
+
+.title-menu-inside-container button:hover {
+  background-color: green;
+  color: black;
 }
 
 .status-view {
@@ -75,6 +100,7 @@ body, html {
   grid-column: 2;
   grid-row: 2;
   text-align: center;
+  font-size: 16px;
 }
 
 

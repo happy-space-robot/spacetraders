@@ -16,11 +16,10 @@ export default class Game
 
     public constructor()
     {
-        this.createView = this.createView.bind(this);
+        this.CreateView = this.CreateView.bind(this);
 
         this.Update = this.Update.bind(this);
         this.OnResize = this.OnResize.bind(this);
-
 
         this.handleMouseInput = this.handleMouseInput.bind(this);
         this.handleTouchInput = this.handleTouchInput.bind(this);
@@ -32,10 +31,10 @@ export default class Game
     public Init() : void
     {
         this.overlay.Init();
-     // this.createView();
+     // this.CreateView();
     }
 
-    public createView() : void
+    public CreateView() : void
     {
         this.m_Scene.Init();
         document.addEventListener('mousemove', this.handleMouseInput );
