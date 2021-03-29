@@ -56,7 +56,6 @@ body, html {
   border-color: green;
   border-radius: 20px;
   border-width: 2px;
-  background-color:rgba(0, 0, 0, 0.0);
 }
 
 .title-menu-inside-container {
@@ -66,6 +65,11 @@ body, html {
   border-radius: 20px;
   border-width: 2px;
   text-align: center;
+}
+
+.status-view {
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .title-menu-inside-container ul {

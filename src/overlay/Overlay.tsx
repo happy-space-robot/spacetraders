@@ -30,6 +30,9 @@ export default class Overlay
     ReactDOM.unmountComponentAtNode(overlayElement);
     this.network.getStatus((status:string) =>
     {
+      if (status === 'spacetraders is currently online and available to play') {
+        status = 'SpaceTraders is online and available to play!'
+      }
       ReactDOM.render(
         <TitlePagePanel serverStatus={ status } clickHandler={ this.clickHandler }/>,
         overlayElement
