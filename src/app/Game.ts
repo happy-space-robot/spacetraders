@@ -39,7 +39,6 @@ export default class Game
     public OverlayClickHandler(event: MouseEvent) : void
     {
       event.preventDefault();
-      console.log(event);
       switch((event.target as Element).id) {
         case "login-button":
           console.log('Log in!');
@@ -49,8 +48,8 @@ export default class Game
           break;
         case "start-button":
           console.log('Start!');
-          this.overlay.CreateGameOverlay();
           this.CreateView();
+          this.overlay.CreateGameOverlay();
           break;
         default:
           console.log('Default click handler reached.');
