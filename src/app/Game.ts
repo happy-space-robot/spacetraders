@@ -2,6 +2,7 @@ import SceneRenderer from '../render/SceneRenderer';
 import Planet from './Planet';
 import * as THREE from 'three';
 import Overlay from '../overlay/Overlay';
+import React, { MouseEvent } from 'react';
 
 export default class Game
 {
@@ -17,6 +18,7 @@ export default class Game
     public constructor()
     {
         this.CreateView = this.CreateView.bind(this);
+        this.OverlayClickHandler = this.OverlayClickHandler.bind(this);
 
         this.Update = this.Update.bind(this);
         this.OnResize = this.OnResize.bind(this);
@@ -25,13 +27,34 @@ export default class Game
         this.handleTouchInput = this.handleTouchInput.bind(this);
 
         this.m_Scene = new SceneRenderer();
-        this.overlay = new Overlay();
+        this.overlay = new Overlay(this.OverlayClickHandler);
     }
 
     public Init() : void
     {
         this.overlay.Init();
      // this.CreateView();
+    }
+
+    public OverlayClickHandler(event: MouseEvent) : void
+    {
+      event.preventDefault();
+      console.log(event);
+      switch((event.target as Element).id) {
+        case "login-button":
+          console.log('Log in!');
+          break;
+        case "create-account-button":
+          console.log('Create account!');
+          break;
+        case "start-button":
+          console.log('Start!');
+          this.overlay.CreateGameOverlay();
+          this.CreateView();
+          break;
+        default:
+          console.log('Default click handler reached.');
+      }
     }
 
     public CreateView() : void
