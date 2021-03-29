@@ -1,57 +1,89 @@
-// import serve from 'rollup-plugin-serve'
-// import livereload from 'rollup-plugin-livereload'
-// import babel from '@rollup/plugin-babel';
-import typescript from '@rollup/plugin-typescript';
-import del from 'rollup-plugin-delete'
-import json from '@rollup/plugin-json';
-import html from '@rollup/plugin-html';
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
 import replace from '@rollup/plugin-replace';
-import nodePolyFills from 'rollup-plugin-node-polyfills';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import babel from 'rollup-plugin-babel';
+import html from '@rollup/plugin-html';
+import scss from 'rollup-plugin-scss';
 import { terser } from 'rollup-plugin-terser';
+import serve from 'rollup-plugin-serve';
+import livereload from 'rollup-plugin-livereload';
+
+const isProd = process.env.NODE_ENV === 'production';
+const extensions = ['.js', '.ts', '.tsx'];
 
 export default {
   input: 'src/main.ts',
-  output: [
-    {
-      file: 'dist/bundle.js',
-      format: 'iife',
-      name: 'spacetraders',
-    },
-    {
-      file: 'dist/bundle.min.js',
-      format: 'iife',
-      name: 'spacetraders',
-      plugins: [ terser() ]
-    }
-  ],
+  output: {
+    file: 'dist/index.js',
+    format: 'iife',
+  },
   plugins: [
-    typescript(),
-    del({ targets: 'public/*' }),
-    json(),
-    html({ title: 'Space Traders' }),
-    nodeResolve({
-      extensions: ["js"],
-    }),
     replace({
-      preventAssignment: true,
-      'process.env.NODE_ENV': JSON.stringify( 'development' )
+      'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development'),
     }),
-    // babel({
-    //   presets: ["@babel/preset-react"]
-    // }),
-    commonjs(),
-    nodePolyFills()
-    // serve({
-    //   open: true,
-    //   verbose: true,
-    //   contentBase: ["", "dist"],
-    //   host: "localhost",
-    //   port: 3000,
-    // }),
-    // livereload({
-    //   watch: "dist"
-    // })
-  ]
+    resolve({
+      extensions,
+    }),
+    commonjs({
+      include: /node_modules/,
+    }),
+    babel({
+      extensions,
+      exclude: /node_modules/,
+      babelrc: false,
+      runtimeHelpers: true,
+      presets: [
+        '@babel/preset-env',
+        '@babel/preset-react',
+        '@babel/preset-typescript',
+      ],
+      plugins: [
+        'react-require',
+        '@babel/plugin-syntax-dynamic-import',
+        '@babel/plugin-proposal-class-properties',
+        ['@babel/plugin-proposal-object-rest-spread', {
+          useBuiltIns: true,
+        }],
+        ['@babel/plugin-transform-runtime', {
+          corejs: 3,
+          helpers: true,
+          regenerator: true,
+          useESModules: false,
+        }],
+      ],
+    }),
+    html({
+      fileName: 'index.html',
+      title: 'Spacetraders',
+      template: ({ title }) => {
+        return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>${title}</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div id="app"></div>
+  <script src="index.js"></script>
+</body>
+</html>
+`;
+      },
+    }),
+    scss({
+      output: 'dist/index.css',
+    }),
+    (isProd && terser()),
+    (!isProd && serve({
+      host: 'localhost',
+      port: 3000,
+      open: true,
+      contentBase: ['dist'],
+    })),
+    (!isProd && livereload({
+      watch: 'dist',
+    })),
+  ],
 };

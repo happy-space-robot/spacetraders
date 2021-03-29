@@ -1,13 +1,23 @@
 {
   "compilerOptions": {
+    "target": "esnext",
     "module": "esnext",
-    "moduleResolution": "Node",
-    "noImplicitAny": true,
-    "removeComments": true,
-    "resolveJsonModule": true,
-    "preserveConstEnums": true,
-    "target": "ES5"
+    "moduleResolution": "node",
+    "jsx": "preserve",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "strict": true,
+    "noEmit": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts", "**/titlescreen.ts"]
+  "exclude": [
+    "node_modules"
+  ]
 }
