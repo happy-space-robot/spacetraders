@@ -5,19 +5,17 @@ body, html {
   height: 100%
 }
 
-.status-view {
-  color: white;
+.app {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+.overlay {
   z-index: 100;
 }
 
-.title-banner {
-  white-space: pre;
-  color: green;
-  font-size: 6px;
-  z-index: 100;
-}
-
-.title-page-container {
+.title-page-outside-container {
   // Replace with asset from our server eventually, or bundled
   background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/e4/StarfieldSimulation.gif');
   background-repeat: no-repeat;
@@ -27,14 +25,57 @@ body, html {
   position: absolute;
   top: 0px;
   left: 0px;
-}
-
-.overlay {
 
 }
 
-.app {
-  position: absolute;
-  top: 0px;
-  left: 0px;
+.title-page-inside-container {
+  z-index: 101;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-template-rows: auto auto auto;
+  align-items: center;
+  justify-items: center;
 }
+
+.title-banner-container {
+  white-space: pre;
+  color: green;
+  font-size: 6px;
+  z-index: 100;
+  grid-column: 2;
+  grid-row: 1;
+  margin-top: 20px;
+}
+
+.title-banner {
+
+}
+
+.title-menu-outside-container {
+  grid-column: 2;
+  grid-row: 2;
+  width: 55%;
+  border-style: solid;
+  border-color: green;
+  border-radius: 20px;
+  border-width: 2px;
+}
+
+.title-menu-inside-container {
+  margin: 2px;
+  border-style: solid;
+  border-color: green;
+  border-radius: 20px;
+  border-width: 2px;
+}
+
+.status-view {
+  color: green;
+  z-index: 100;
+  grid-column: 2;
+  grid-row: 2;
+  text-align: center;
+}
+
+
+

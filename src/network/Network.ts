@@ -7,10 +7,10 @@ export default class Network
 
     public Init() : void
     {
-      
+
     }
 
-    public getStatus(callback: Function) : Promise<any> {
+    public getStatus(callback: Function /*= (data: string) => {return data}*/) : Promise<any> {
       return fetch('https://api.spacetraders.io/game/status')
         .then(response => response.json())
         .then(data => {

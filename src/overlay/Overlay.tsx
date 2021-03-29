@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Network from '../network/Network';
 import { TitlePagePanel } from './titlepage/TitlePagePanel';
+
 import '../styles/style.scss';
 
 
@@ -8,16 +10,25 @@ import '../styles/style.scss';
 export default class Overlay
 {
 
+  private network: Network;
 
   public constructor()
   {
-
+    this.network = new Network();
   }
 
   public Init() : void
   {
-    ReactDOM.render(<TitlePagePanel />, document.getElementById('overlay'));
+    // Need to add some error handling to this in case the server doesn't exist
+    // In fact, we should refactor the whole thing so we're not waiting on the
+    // server before rendering the menu
+    this.network.getStatus((status:string) =>
+      {
+        ReactDOM.render(
+          <TitlePagePanel serverStatus={ status }/>,
+          document.getElementById('overlay')
+        );
+      }
+    );
   }
-
-
 }
