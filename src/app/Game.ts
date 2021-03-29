@@ -32,7 +32,7 @@ export default class Game
     public Init() : void
     {
         this.overlay.Init();
-//      this.createView();
+     // this.createView();
     }
 
     public createView() : void
