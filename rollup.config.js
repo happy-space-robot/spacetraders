@@ -63,7 +63,7 @@ export default {
 <head>
   <meta charset="utf-8">
   <title>${title}</title>
-  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="app"></div>
@@ -76,7 +76,8 @@ export default {
     }),
     image(),
     scss({
-      output: 'dist/index.css',
+      output: './dist/style.css',
+      watch: './src/styles'
     }),
     (isProd && terser()),
     (!isProd && serve({

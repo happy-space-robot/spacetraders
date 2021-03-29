@@ -1,8 +1,7 @@
 import React from 'react';
 
-export default function TitleBannerComponent() {
-  return (
-    <pre style={{whiteSpace: "pre", color: "green", fontSize: "6px"}}>
+export const TitleBannerComponent = () =>
+<pre className="title-banner">
 &nbsp;                                                                                                                                                                                 4dddddddd<br/>
 &nbsp;     SSSSSSSSSSSSSSS                                                                                    TTTTTTTTTTTTTTTTTTTTTTT                                                  d::::::d<br/>
 &nbsp;   SS:::::::::::::::S                                                                                   T:::::::::::::::::::::T                                                  d::::::d<br/>
@@ -26,9 +25,8 @@ export default function TitleBannerComponent() {
 &nbsp;                     p:::::::p<br/>
 &nbsp;                     p:::::::p<br/>
 &nbsp;                     ppppppppp<br/>
-    </pre>
-  )
-}
+</pre>
+
 
 
 

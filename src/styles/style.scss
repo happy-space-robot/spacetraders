@@ -1,0 +1,19 @@
+.status-view {
+  color: white;
+  z-index: 100;
+}
+
+.title-banner {
+  white-space: pre;
+  color: green;
+  font-size: 6px;
+  z-index: 100;
+}
+
+.title-page-container {
+  // Replace with asset from our server eventually, or bundled
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/e4/StarfieldSimulation.gif');
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+}

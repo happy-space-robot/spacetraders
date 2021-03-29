@@ -1,21 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import TitlePage from './titlepage/TitlePagePanel'
+import { TitlePagePanel } from './titlepage/TitlePagePanel';
+import '../styles/style.scss';
 
 
 // Organize and initiate all our panels and bars
 export default class Overlay
 {
-  public titlePage: TitlePage;
+
 
   public constructor()
   {
-    this.titlePage = new TitlePage;
+
   }
 
   public Init() : void
   {
-    this.titlePage.Init();
+    ReactDOM.render(<TitlePagePanel />, document.getElementById('overlay'));
   }
 
 
