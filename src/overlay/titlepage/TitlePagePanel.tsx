@@ -1,9 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import TitlePageComponent from './titlepageview';
-import Network from '../network/network';
+import TitleBannerComponent from './TitleBannerComponent';
+import Network from '../../network/Network';
+import starfield from '../public/StarfieldSimulation.gif';
 
-export default class Overlay
+// Create the TitlePage
+export default class TitlePage
 {
     public network: Network;
 
@@ -20,7 +22,15 @@ export default class Overlay
       this.createTitlePage();
     }
 
-    public createTitlePage() : void{
+    public createTitlePage() : void
+    {
+      const titlePageStyles = {
+        // Replace this with asset from our server one day
+        backgroundImage: "url('https://upload.wikimedia.org/wikipedia/commons/e/e4/StarfieldSimulation.gif')",
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover'
+      };
+      this.setStyle(document.body, titlePageStyles);
       this.createTitleBanner();
       this.network.getStatus((status: string) => this.createStatusView(status));
     }
@@ -29,7 +39,7 @@ export default class Overlay
     {
       const overlayElement = document.getElementById('overlay');
       ReactDOM.render(
-        <TitlePageComponent />,
+        <TitleBannerComponent />,
         overlayElement
       );
       const styles = {

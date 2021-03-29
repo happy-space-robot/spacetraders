@@ -3,6 +3,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import babel from 'rollup-plugin-babel';
 import html from '@rollup/plugin-html';
+import image from '@rollup/plugin-image';
 import scss from 'rollup-plugin-scss';
 import { terser } from 'rollup-plugin-terser';
 import serve from 'rollup-plugin-serve';
@@ -73,6 +74,7 @@ export default {
 `;
       },
     }),
+    image(),
     scss({
       output: 'dist/index.css',
     }),

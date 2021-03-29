@@ -1,8 +1,8 @@
 import React from 'react';
 
-export default function TitlePageComponent() {
+export default function TitleBannerComponent() {
   return (
-    <pre style={{whiteSpace: "pre", color: "green", backgroundColor: "black", fontSize: "6px"}}>
+    <pre style={{whiteSpace: "pre", color: "green", fontSize: "6px"}}>
 &nbsp;                                                                                                                                                                                 4dddddddd<br/>
 &nbsp;     SSSSSSSSSSSSSSS                                                                                    TTTTTTTTTTTTTTTTTTTTTTT                                                  d::::::d<br/>
 &nbsp;   SS:::::::::::::::S                                                                                   T:::::::::::::::::::::T                                                  d::::::d<br/>

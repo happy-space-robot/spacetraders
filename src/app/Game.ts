@@ -1,13 +1,11 @@
-import Network from '../network/network';
 import SceneRenderer from '../render/SceneRenderer';
 import Planet from './Planet';
 import * as THREE from 'three';
-import Overlay from '../overlay/overlay';
+import Overlay from '../overlay/Overlay';
 
 export default class Game
 {
     public m_Scene: SceneRenderer;
-    public network: Network;
     public overlay: Overlay;
 
     private m_LastUpdateTime: number = 0;
@@ -18,23 +16,28 @@ export default class Game
 
     public constructor()
     {
+        this.createView = this.createView.bind(this);
+
         this.Update = this.Update.bind(this);
         this.OnResize = this.OnResize.bind(this);
+
 
         this.handleMouseInput = this.handleMouseInput.bind(this);
         this.handleTouchInput = this.handleTouchInput.bind(this);
 
         this.m_Scene = new SceneRenderer();
-        this.network = new Network();
         this.overlay = new Overlay();
     }
 
     public Init() : void
     {
-        this.m_Scene.Init();
-        this.network.Init();
         this.overlay.Init();
+//      this.createView();
+    }
 
+    public createView() : void
+    {
+        this.m_Scene.Init();
         document.addEventListener('mousemove', this.handleMouseInput );
         document.addEventListener('mousedown', this.handleMouseInput );
         document.addEventListener('mouseup', this.handleMouseInput );
