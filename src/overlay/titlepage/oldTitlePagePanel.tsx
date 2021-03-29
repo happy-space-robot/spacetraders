@@ -1,3 +1,7 @@
+// Kept this just in case anyone was curious about what this looked
+// like before the refactor to React
+
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { TitleBannerComponent } from './TitleBannerComponent';

@@ -56,6 +56,7 @@ body, html {
   border-color: green;
   border-radius: 20px;
   border-width: 2px;
+  background-color:rgba(0, 0, 0, 0.0);
 }
 
 .title-menu-inside-container {
@@ -79,7 +80,7 @@ body, html {
 
 .title-menu-inside-container button {
   margin-top: 10px;
-  background-color: black;
+  background-color: rgba(0, 0, 0, 0.8);
   border: 2px solid green;
   border-radius: 8px;
   color: green;
@@ -89,6 +90,10 @@ body, html {
   font-family: 'Courier New', Courier, monospace;
   font-weight: 900;
 }
+
+// #start-button {
+//   opacity: 0.5;
+// }
 
 .title-menu-inside-container button:hover {
   background-color: green;
