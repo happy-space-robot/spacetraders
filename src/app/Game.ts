@@ -2,11 +2,13 @@ import Network from '../network/network';
 import SceneRenderer from '../render/SceneRenderer';
 import Planet from './Planet';
 import * as THREE from 'three';
+import Overlay from '../overlay/overlay';
 
 export default class Game
 {
     public m_Scene: SceneRenderer;
     public network: Network;
+    public overlay: Overlay;
 
     private m_LastUpdateTime: number = 0;
 
@@ -24,12 +26,14 @@ export default class Game
 
         this.m_Scene = new SceneRenderer();
         this.network = new Network();
+        this.overlay = new Overlay();
     }
 
     public Init() : void
     {
         this.m_Scene.Init();
         this.network.Init();
+        this.overlay.Init();
 
         document.addEventListener('mousemove', this.handleMouseInput );
         document.addEventListener('mousedown', this.handleMouseInput );

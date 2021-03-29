@@ -66,6 +66,7 @@ export default {
 </head>
 <body>
   <div id="app"></div>
+  <div id="overlay"></div>
   <script src="index.js"></script>
 </body>
 </html>
