@@ -8,8 +8,10 @@ export default class Planet
     public m_Size: number;
     public m_Color: THREE.Color;
 
-    private m_Mesh: THREE.Mesh;
+    private m_VisualObject: THREE.Mesh;
     private m_CollisionVolume: THREE.Sphere;
+
+    public get VisualObject() : THREE.Mesh { return this.m_VisualObject; }
 
     public constructor(jsonObj: any)
     {
@@ -17,17 +19,12 @@ export default class Planet
         this.m_Position = new THREE.Vector3(jsonObj.position.x, jsonObj.position.y, jsonObj.position.z);
         this.m_Size = jsonObj.size;
         this.m_Color = new THREE.Color(parseInt(jsonObj.color));
-    }
 
-    public Init()
-    {
         // Initialize visuals
         const geometry = new THREE.SphereGeometry( this.m_Size, 32, 32 );
         const material = new THREE.MeshPhongMaterial( {color: this.m_Color} );
-        const sphere = new THREE.Mesh( geometry, material );
-        sphere.position.set(this.m_Position.x, this.m_Position.y, this.m_Position.z);
-
-        SceneRenderer.Instance.AddToScene(sphere);
+        this.m_VisualObject = new THREE.Mesh( geometry, material );
+        this.m_VisualObject.position.set(this.m_Position.x, this.m_Position.y, this.m_Position.z);
 
         // Create a bounding sphere for collision detection
         this.m_CollisionVolume = new THREE.Sphere(this.m_Position, this.m_Size);

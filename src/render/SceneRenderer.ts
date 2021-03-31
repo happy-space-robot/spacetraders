@@ -44,6 +44,17 @@ export default class SceneRenderer
         this.m_Scene.add(object);
     }
 
+    public RemoveFromScene(object: THREE.Object3D, cleanupObject: boolean)
+    {
+        this.m_Scene.remove(object);
+        
+        if(cleanupObject)
+        {
+            object.geometry.dispose();
+            object.material.dispose();
+        }
+    }
+
     private InitLighting()
     {
         const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444);
