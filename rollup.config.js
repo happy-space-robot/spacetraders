@@ -20,6 +20,7 @@ export default {
   output: {
     file: 'dist/index.js',
     format: 'iife',
+    sourcemap: true,
   },
   plugins: [
     replace({
@@ -59,6 +60,7 @@ export default {
           useESModules: false,
         }],
       ],
+      sourceMaps: 'both',
     }),
     html({
       fileName: 'index.html',
