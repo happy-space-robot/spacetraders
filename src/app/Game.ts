@@ -1,8 +1,19 @@
-import SceneRenderer from '../render/SceneRenderer';
-import Planet from './Planet';
 import * as THREE from 'three';
 import Overlay from '../overlay/Overlay';
 import React, { MouseEvent } from 'react';
+import SceneRenderer from '../render/SceneRenderer';
+import GameView from '../view/GameView';
+import GalacticView from '../view/GalacticView';
+import StellarView from '../view/StellarView';
+import PlanetaryView from '../view/PlanetaryView';
+
+export enum GameViewType
+{
+    None,
+    Galactic,
+    Stellar,
+    Planetary
+}
 
 export default class Game
 {
@@ -11,9 +22,13 @@ export default class Game
 
     private m_LastUpdateTime: number = 0;
 
-    private m_Planets = new Array<Planet>();
-    private m_PlayerVisuals: THREE.Mesh;
-    private m_CurrentPlanet: Planet;
+    private m_Views = new Map<GameViewType, GameView>();
+    private m_CurrentViewType: GameViewType = GameViewType.None;
+
+    public get CurrentView() : GameView
+    {
+        return this.m_Views.get(this.m_CurrentViewType);
+    }
 
     public constructor()
     {
@@ -28,12 +43,26 @@ export default class Game
 
         this.m_Scene = new SceneRenderer();
         this.overlay = new Overlay(this.OverlayClickHandler);
+        
+        this.m_Views.set(GameViewType.Galactic, new GalacticView);
+        this.m_Views.set(GameViewType.Stellar, new StellarView);
+        this.m_Views.set(GameViewType.Planetary, new PlanetaryView);
     }
 
     public Init() : void
     {
         this.overlay.Init();
-     // this.CreateView();
+        
+        this.m_Scene.Init();
+        document.addEventListener('mousemove', this.handleMouseInput );
+        document.addEventListener('mousedown', this.handleMouseInput );
+        document.addEventListener('mouseup', this.handleMouseInput );
+        document.addEventListener('touchstart', this.handleTouchInput );
+        document.addEventListener('touchend', this.handleTouchInput );
+        document.addEventListener('touchmove', this.handleTouchInput );
+
+        window.addEventListener( 'resize', this.OnResize );
+        window.requestAnimationFrame(this.Update);
     }
 
     public OverlayClickHandler(event: MouseEvent) : void
@@ -58,31 +87,10 @@ export default class Game
 
     public CreateView() : void
     {
-        this.m_Scene.Init();
-        document.addEventListener('mousemove', this.handleMouseInput );
-        document.addEventListener('mousedown', this.handleMouseInput );
-        document.addEventListener('mouseup', this.handleMouseInput );
-        document.addEventListener('touchstart', this.handleTouchInput );
-        document.addEventListener('touchend', this.handleTouchInput );
-        document.addEventListener('touchmove', this.handleTouchInput );
-
-        window.addEventListener( 'resize', this.OnResize );
-        window.requestAnimationFrame(this.Update);
-
-        let planetaryData = Game.GetPlanetaryData();
-        for(let planetDef of planetaryData.planets)
-        {
-            this.m_Planets.push(new Planet(planetDef));
-        }
-
-        // Init planets (maybe this happens later, IDK)
-        for(let planet of this.m_Planets)
-        {
-            planet.Init();
-        }
-
-        this.InitPlayer();
-        this.MovePlayerToPlanet(this.m_Planets[0]);
+        // TODO: This is placeholder for now, eventually we'll want to drive the correct
+        // view based on player selection.
+        let planetaryData = StellarView.GetPlanetaryData();
+        this.ActivateView(GameViewType.Stellar, planetaryData);
     }
 
     private OnResize() : void
@@ -104,47 +112,22 @@ export default class Game
 
         this.m_LastUpdateTime = curTime;
 
-        this.UpdatePlayer();
+        this.CurrentView?.Update(curTime);
 
         this.m_Scene.Render();
     }
 
-    // TODO: Make some random planet data for now, eventually load from json file or get from server
-    private static GetPlanetaryData() : any
+    public ActivateView(type: GameViewType, definition: any)
     {
-        let fakeJsonObj: any = {};
-
-        let planetNames = ["Feldo", "Magrathea", "Impossiblonia", "Pizzeria", "Galacticus", "Ix", "TBD"];
-        let planets = new Array<any>();
-        for(let i = 0; i < planetNames.length; ++i)
+        if(type != this.m_CurrentViewType)
         {
-            let fakePlanetJsonObj: any = {};
-            fakePlanetJsonObj.name = planetNames[i];
-
-            let positionObj: any = {}
-            positionObj.x = (Math.random()-0.5)*100;
-            positionObj.y = (Math.random()-0.5)*100;
-            positionObj.z = (Math.random()-0.5)*100;
-            fakePlanetJsonObj.position = positionObj;
-            fakePlanetJsonObj.size = 4 + Math.random()*2;
-            fakePlanetJsonObj.color = new THREE.Color(Math.random(), Math.random(), Math.random()).getHex();
-            planets.push(fakePlanetJsonObj);
+            this.CurrentView?.Shutdown(this.m_Scene);
+            this.m_CurrentViewType = type;
+            this.CurrentView?.Init(this.m_Scene, definition);
         }
-        fakeJsonObj.planets = planets;
-
-        return fakeJsonObj;
     }
 
-    private InitPlayer()
-    {
-        const geometry = new THREE.ConeGeometry(1, 4, 32);
-        const material = new THREE.MeshPhongMaterial( { color: 0xffff00 } );
-        this.m_PlayerVisuals = new THREE.Mesh( geometry, material );
-        this.m_PlayerVisuals.matrixAutoUpdate = false;
-        SceneRenderer.Instance.AddToScene(this.m_PlayerVisuals);
-    }
-
-    private handleMouseInput(e: MouseEvent)
+    private handleMouseInput(e: globalThis.MouseEvent) : void
     {
         if((e.buttons % 20) == 1)
         {
@@ -152,7 +135,7 @@ export default class Game
         }
     }
 
-    private handleTouchInput(e: TouchEvent)
+    private handleTouchInput(e: TouchEvent) : void
     {
         if(e.touches.length > 0)
         {
@@ -162,41 +145,6 @@ export default class Game
 
     private OnCursorPress(x: number, y: number)
     {
-        for(let p of this.m_Planets)
-        {
-            if(p.Pick(x, y))
-            {
-                this.MovePlayerToPlanet(p);
-            }
-        }
-    }
-
-    private MovePlayerToPlanet(planet: Planet)
-    {
-        console.error("Debug: Moved to planet " + planet.m_Name);
-        this.m_CurrentPlanet = planet;
-    }
-
-    private UpdatePlayer()
-    {
-        // Make the player rotate around the planet, just for fun
-        let orbitalOffset = new THREE.Matrix4();
-        orbitalOffset.setPosition(new THREE.Vector3(this.m_CurrentPlanet.m_Size * 1.4, 0, 0));
-
-        let rotationAxis = new THREE.Vector3(0,0.5,0.5);
-        rotationAxis.normalize();
-
-        let rotation = new THREE.Matrix4();
-        rotation.makeRotationAxis(rotationAxis, this.m_LastUpdateTime * 0.001);
-
-        let planetaryPosition = new THREE.Matrix4();
-        planetaryPosition.setPosition(this.m_CurrentPlanet.m_Position);
-
-        let transform = orbitalOffset.clone();
-        transform.premultiply(rotation);
-        transform.premultiply(planetaryPosition);
-
-        this.m_PlayerVisuals.matrix = transform.clone();
-        this.m_PlayerVisuals.updateMatrixWorld(true);
+        this.CurrentView?.OnCursorPress(x, y);
     }
 }

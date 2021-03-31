@@ -42,7 +42,7 @@
     "rollup-plugin-scss": "^2.1.0",
     "rollup-plugin-serve": "^1.0.1",
     "rollup-plugin-terser": "^5.2.0",
-    "serve": "^11.3.0",
+    "serve": "^11.3.2",
     "three": "^0.126.1",
     "typescript": "^3.9.9"
   }
