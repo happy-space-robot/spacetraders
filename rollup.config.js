@@ -87,6 +87,12 @@ export default {
       watch: './src/styles'
     }),
     (isProd && terser()),
+    (isProd && serve({
+      host: 'localhost',
+      port: 5000,
+      open: true,
+      contentBase: ['dist'],
+    })),
     (!isProd && serve({
       host: 'localhost',
       port: 3000,
