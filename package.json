@@ -3,17 +3,20 @@
   "name": "spacetraders",
   "version": "1.0.0",
   "repository": "",
-  "author": "Jason Carini & Jeff Issellee",
+  "author": "Jason Carini & Jeff Isselee",
   "license": "0BSD",
   "scripts": {
     "dev": "rollup -c -w",
     "build": "rimraf public && cross-env NODE_ENV=production rollup -c",
-    "start": "serve public"
+    "start": "serve public -n"
   },
   "dependencies": {
     "@rollup/plugin-image": "^2.0.6",
+    "@types/react-transition-group": "^4.4.1",
+    "@types/three": "^0.126.2",
     "react": "^16.13.0",
-    "react-dom": "^16.13.0"
+    "react-dom": "^16.13.0",
+    "react-transition-group": "^4.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.7",

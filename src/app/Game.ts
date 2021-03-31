@@ -3,6 +3,7 @@ import Planet from './Planet';
 import * as THREE from 'three';
 import Overlay from '../overlay/Overlay';
 import React, { MouseEvent } from 'react';
+import { TitlePagePanel } from '../overlay/titlepage/TitlePagePanel';
 
 export default class Game
 {

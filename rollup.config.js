@@ -8,6 +8,9 @@ import scss from 'rollup-plugin-scss';
 import { terser } from 'rollup-plugin-terser';
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
+import react from 'react';
+import reactDom from 'react-dom';
+
 
 const isProd = process.env.NODE_ENV === 'production';
 const extensions = ['.js', '.ts', '.tsx'];
@@ -27,6 +30,10 @@ export default {
     }),
     commonjs({
       include: /node_modules/,
+      namedExports: {
+        react: Object.keys(react),
+        'react-dom': Object.keys(reactDom),
+      }
     }),
     babel({
       extensions,
