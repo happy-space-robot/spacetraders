@@ -6,6 +6,7 @@ import GameView from '../view/GameView';
 import GalacticView from '../view/GalacticView';
 import StellarView from '../view/StellarView';
 import PlanetaryView from '../view/PlanetaryView';
+import Network from '../network/Network';
 
 export enum GameViewType
 {
@@ -19,6 +20,7 @@ export default class Game
 {
     public m_Scene: SceneRenderer;
     public overlay: Overlay;
+    public network: Network;
 
     private m_LastUpdateTime: number = 0;
 
@@ -43,6 +45,7 @@ export default class Game
 
         this.m_Scene = new SceneRenderer();
         this.overlay = new Overlay(this.OverlayClickHandler);
+        this.network = new Network();
 
         this.m_Views.set(GameViewType.Galactic, new GalacticView);
         this.m_Views.set(GameViewType.Stellar, new StellarView);
@@ -79,6 +82,10 @@ export default class Game
           console.log('Start!');
           this.CreateView();
           this.overlay.CreateGameOverlay();
+          break;
+        case "goto-dev-menu-button":
+          console.log('Dev menu!');
+          this.overlay.CreateDevMenu();
           break;
         default:
           console.log('Default click handler reached.');

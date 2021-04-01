@@ -2,7 +2,12 @@ import React, { MouseEventHandler } from 'react';
 import ReactDOM from 'react-dom';
 import Network from '../network/Network';
 import { TitlePagePanel } from './titlepage/TitlePagePanel';
+import DevMenu from './devmenu/DevMenu';
 import '../styles/style.scss';
+
+type statusResponse = {
+  status: string;
+}
 
 // Organize and initiate all our panels and bars
 export default class Overlay
@@ -28,13 +33,13 @@ export default class Overlay
   public CreateTitlePage() : void {
     const overlayElement = document.getElementById('overlay') as Element
     ReactDOM.unmountComponentAtNode(overlayElement);
-    this.network.getStatus((status:string) =>
+    this.network.getStatus((statusMsg: statusResponse) =>
     {
-      if (status === 'spacetraders is currently online and available to play') {
-        status = 'SpaceTraders is online and available to play!'
+      if (statusMsg.status === 'spacetraders is currently online and available to play') {
+        statusMsg.status = 'SpaceTraders is online and available to play!'
       }
       ReactDOM.render(
-        <TitlePagePanel serverStatus={ status } clickHandler={ this.clickHandler }/>,
+        <TitlePagePanel serverStatus={ statusMsg.status } clickHandler={ this.clickHandler }/>,
         overlayElement
       );
     });
@@ -43,6 +48,14 @@ export default class Overlay
   public CreateGameOverlay() : void {
     const overlayElement = document.getElementById('overlay') as Element
     ReactDOM.unmountComponentAtNode(overlayElement);
+  }
+
+  public CreateDevMenu() : void {
+    const overlayElement = document.getElementById('overlay') as Element
+    ReactDOM.unmountComponentAtNode(overlayElement);
+    ReactDOM.render(
+      <DevMenu />, overlayElement
+    );
   }
 
 
