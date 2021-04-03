@@ -21,7 +21,8 @@ type resultFromHTTP = {
   message?: string,
   token?: string,
   loans?: Array<loansFromHTTP>
-
+  ships?: Array<shipsPurchasableFromHTTP>
+  locations?: Array<locationFromHTTP>
 }
 
 type userFromHTTP = {
@@ -37,6 +38,30 @@ type loansFromHTTP = {
   rate: number,
   termInDays: number,
   type: string
+}
+
+type shipsPurchasableFromHTTP = {
+  class: string,
+  manufacturer: string,
+  maxCargo: number,
+  plating: number,
+  purchaseLocations: Array<purchaseOfferFromHTTP>
+  speed: number,
+  type: string,
+  weapons: number,
+}
+
+type locationFromHTTP = {
+  name: string,
+  symbol: string,
+  type: string,
+  x: number,
+  y: number
+}
+
+type purchaseOfferFromHTTP = {
+  location: string,
+  price: number
 }
 
 type shipsFromHTTP = {
@@ -141,6 +166,25 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
           }
         });
         break;
+      case 'autologin':
+        console.log("Logging in test account.");
+        const testUsername = "superawesometestaccount";
+        const testToken = "073a3728-70ea-41e3-9e80-857e293e7d72";
+        this.network.getUserStatus(testUsername, testToken, (result: resultFromHTTP) => {
+          console.log(result);
+          if (result.error) {
+            this.displayErrorMessage(result.error.message);
+          } else if (result.user) {
+            this.setState({username: testUsername});
+            this.setState({token: testToken});
+            this.setState({resultView: (
+              <div>
+                <div>Successfully logged in default test account as {result.user.username}!</div>
+              </div>
+            )});
+          }
+        });
+        break;
       case 'get-user-info':
         console.log("Getting user info.");
         this.network.getUserStatus(this.state.username, this.state.token, (result: resultFromHTTP) => {
@@ -176,6 +220,10 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
                 <div>Rate: {loanObject.rate}</div>
                 <div>Term (in days): {loanObject.termInDays}</div>
                 <div>Type: {loanObject.type}</div>
+                <div id="take-out-loan"><button onClick={(e) => {
+                  e.preventDefault();
+                  this.takeOutLoan(loanObject.type);
+                }}>Take Out Loan</button></div>
               </div>
             );
             console.log(loanItems);
@@ -185,10 +233,71 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
           }
         });
           break;
+        case 'get-available-ships':
+          console.log("Getting available ships.");
+          this.network.getAvailableShips(this.state.token, (result: resultFromHTTP) => {
+            console.log(result);
+            if (result.error) {
+              this.displayErrorMessage(result.error.message);
+            } else if (result.ships) {
+              console.log(result.ships);
+              const shipItems = result.ships.map((shipObject, index) =>
+                <div>
+                <div>Class: {shipObject.class}</div>
+                <div>Manufacturer: {shipObject.manufacturer}</div>
+                <div>Max Cargo: {shipObject.maxCargo}</div>
+                <div>Plating: {shipObject.plating}</div>
+                <div>Speed: {shipObject.speed}</div>
+                <div>Type: {shipObject.type}</div>
+                <div>Weapons: {shipObject.weapons}</div>
+                <div>Offers: {shipObject.purchaseLocations.map((offer, index) =>
+                  <div>{index+1}. {offer.location}: {offer.price}</div>)}</div>
+                <br/>
+                </div>
+              );
+              console.log(shipItems);
+              this.setState({resultView: <div>{shipItems}</div>});
+            } else {
+              console.log('No ships found?');
+            }
+          });
+            break;
+          case 'get-available-planets':
+            console.log("Getting available planets.");
+            this.network.getAvailableLocations(this.state.token, "PLANET", (result: resultFromHTTP) => {
+              console.log(result);
+              if (result.error) {
+                this.displayErrorMessage(result.error.message);
+              } else if (result.locations) {
+                console.log(result.locations);
+                const locationItems = result.locations.map((locationObject, index) =>
+                  <div>
+                  <div>Name: {locationObject.name}</div>
+                  <div>Symbol: {locationObject.symbol}</div>
+                  <div>Coordinates: [{locationObject.x}, {locationObject.y}]</div>
+                  <br/>
+                  </div>
+                );
+                console.log(locationItems);
+                this.setState({resultView: <div>{locationItems}</div>});
+              } else {
+                console.log('No locations found?');
+              }
+            });
+            break;
+            break;
       default:
         console.log('Default click handler reached.');
     }
   };
+
+  takeOutLoan(type: string)
+  {
+    console.log("Taking out a loan of type " + type);
+    this.network.takeOutLoan(this.state.username, this.state.token, type, (result: resultFromHTTP) => {
+      console.log(result);
+    });
+  }
 
   displayErrorMessage(errorMsg: string) {
     this.setState({resultView: <div>Error: {errorMsg}</div>});
@@ -227,12 +336,24 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
                       onChange={this.handleChange}/>
                     <button value="Submit" onClick={this.handleClick}>Submit</button>
                   </label></li>
+                  <li key="autologin"><label id="autologin">
+                    Log In Default Account:
+                    <button value="Submit" onClick={this.handleClick}>Submit</button>
+                  </label></li>
                   <li key="get-user-info"><label id="get-user-info">
                     User Info:
                     <button value="Submit" onClick={this.handleClick}>Submit</button>
                   </label></li>
                   <li key="get-available-loans"><label id="get-available-loans">
                     Available Loans:
+                    <button value="Submit" onClick={this.handleClick}>Submit</button>
+                  </label></li>
+                  <li key="get-available-ships"><label id="get-available-ships">
+                    Available Ships:
+                    <button value="Submit" onClick={this.handleClick}>Submit</button>
+                  </label></li>
+                  <li key="get-available-planets"><label id="get-available-planets">
+                    Available Planets:
                     <button value="Submit" onClick={this.handleClick}>Submit</button>
                   </label></li>
                 </ul>
