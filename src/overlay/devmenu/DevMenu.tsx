@@ -20,19 +20,20 @@ type resultFromHTTP = {
   error?: errorMessageFromHTTP,
   message?: string,
   token?: string,
-  loans?: Array<loansFromHTTP>
+  loans?: Array<loansAvailableFromHTTP>
   ships?: Array<shipsPurchasableFromHTTP>
   locations?: Array<locationFromHTTP>
+  systems?: Array<systemFromHTTP>
 }
 
 type userFromHTTP = {
   username: string,
   credits: number,
-  loans: Array<loansFromHTTP>,
-  ships: Array<shipsFromHTTP>
+  loans: Array<loansTakenFromHTTP>,
+  ships: Array<shipsOwnedFromHTTP>
 }
 
-type loansFromHTTP = {
+type loansAvailableFromHTTP = {
   amount: number,
   collateralRequired: boolean,
   rate: number,
@@ -51,6 +52,12 @@ type shipsPurchasableFromHTTP = {
   weapons: number,
 }
 
+type systemFromHTTP = {
+  symbol: string,
+  name: string,
+  locations: Array<locationFromHTTP>
+}
+
 type locationFromHTTP = {
   name: string,
   symbol: string,
@@ -64,7 +71,7 @@ type purchaseOfferFromHTTP = {
   price: number
 }
 
-type shipsFromHTTP = {
+type shipsOwnedFromHTTP = {
   cargo: Array<cargoFromHTTP>,
   class: string,
   id: string,
@@ -78,6 +85,14 @@ type shipsFromHTTP = {
   weapons: number,
   x: number,
   y: number
+}
+
+type loansTakenFromHTTP = {
+  due: string,
+  id: string,
+  repaymentAmount: number,
+  status: string,
+  type: string
 }
 
 type cargoFromHTTP = {
@@ -153,41 +168,59 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
         break;
       case 'login':
         console.log("Logging in.");
-        this.network.getUserStatus(this.state.username, this.state.token, (result: resultFromHTTP) => {
-          console.log(result);
-          if (result.error) {
-            this.displayErrorMessage(result.error.message);
-          } else if (result.user) {
+        this.network.authenticateUser(this.state.username, this.state.token, (errorMessage: string) => {
+          if (errorMessage) {
+            this.displayErrorMessage(errorMessage);
+          } else {
             this.setState({resultView: (
               <div>
-                <div>Successfully logged in as {result.user.username}!</div>
+                <div>Successfully logged in as {this.state.username}!</div>
               </div>
             )});
           }
         });
         break;
-      case 'autologin':
+      case 'defaultlogin':
         console.log("Logging in test account.");
         const testUsername = "superawesometestaccount";
         const testToken = "073a3728-70ea-41e3-9e80-857e293e7d72";
-        this.network.getUserStatus(testUsername, testToken, (result: resultFromHTTP) => {
+        this.network.authenticateUser(testUsername, testToken, (errorMessage: string) => {
+          if (errorMessage) {
+            this.displayErrorMessage(errorMessage);
+          } else {
+            this.setState({resultView: (
+              <div>
+                <div>Successfully logged in default test account as {testUsername}!</div>
+              </div>
+            )});
+          }
+        });
+        break;
+      case 'randologin':
+        console.log("Logging in random account.");
+        const randoUsername = "Rando" + Math.floor((Math.random()*1000000));
+        this.network.createUser(randoUsername, (result: resultFromHTTP) => {
           console.log(result);
           if (result.error) {
             this.displayErrorMessage(result.error.message);
           } else if (result.user) {
-            this.setState({username: testUsername});
-            this.setState({token: testToken});
-            this.setState({resultView: (
-              <div>
-                <div>Successfully logged in default test account as {result.user.username}!</div>
-              </div>
-            )});
+            this.network.authenticateUser(randoUsername, result.token, (errorMessage: string) => {
+              if (errorMessage) {
+                this.displayErrorMessage(errorMessage);
+              } else {
+                this.setState({resultView: (
+                  <div>
+                    <div>Successfully logged in default test account as {randoUsername}!</div>
+                  </div>
+                )});
+              }
+            });
           }
         });
         break;
       case 'get-user-info':
         console.log("Getting user info.");
-        this.network.getUserStatus(this.state.username, this.state.token, (result: resultFromHTTP) => {
+        this.network.getUserStatus((result: resultFromHTTP) => {
           console.log(result);
           if (result.error) {
             this.displayErrorMessage(result.error.message);
@@ -196,8 +229,14 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
               <div>
                 <div>Username: {result.user.username}</div>
                 <div>Credits: {result.user.credits}</div>
-                <div>Ships: {result.user.ships}</div>
-                <div>Loans: {result.user.loans}</div>
+                <div>Ships: {result.user.ships.map((ship, index) =>
+                  <div key={"ship"+index+1}>{index+1}. {ship.type} at [{ship.x}, {ship.y}], {ship.spaceAvailable} of {ship.maxCargo} cargo units available</div>)}
+                </div>
+                <br/>
+                <div>Loans: {result.user.loans.map((loan, index) =>
+                  <div key={"loan"+index+1}>{index+1}. {loan.type}: {loan.repaymentAmount}</div>)}
+                </div>
+                <br/>
               </div>
             )});
           }
@@ -205,7 +244,7 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
         break;
       case 'get-available-loans':
         console.log("Getting available loans.");
-        this.network.getAvailableLoans(this.state.token, (result: resultFromHTTP) => {
+        this.network.getGameInfo("loans", (result: resultFromHTTP) => {
           console.log(result);
           if (result.error) {
             this.displayErrorMessage(result.error.message);
@@ -214,7 +253,7 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
             console.log(result.loans[0]);
             console.log(result.loans[0].amount);
             const loanItems = result.loans.map((loanObject, index) =>
-              <div>
+              <div key={"loan"+index+1}>
                 <div>Amount: {loanObject.amount}</div>
                 <div>Collateral Required: {loanObject.collateralRequired.toString()}</div>
                 <div>Rate: {loanObject.rate}</div>
@@ -235,24 +274,30 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
           break;
         case 'get-available-ships':
           console.log("Getting available ships.");
-          this.network.getAvailableShips(this.state.token, (result: resultFromHTTP) => {
+          this.network.getGameInfo("ships", (result: resultFromHTTP) => {
             console.log(result);
             if (result.error) {
               this.displayErrorMessage(result.error.message);
             } else if (result.ships) {
               console.log(result.ships);
               const shipItems = result.ships.map((shipObject, index) =>
-                <div>
-                <div>Class: {shipObject.class}</div>
-                <div>Manufacturer: {shipObject.manufacturer}</div>
-                <div>Max Cargo: {shipObject.maxCargo}</div>
-                <div>Plating: {shipObject.plating}</div>
-                <div>Speed: {shipObject.speed}</div>
-                <div>Type: {shipObject.type}</div>
-                <div>Weapons: {shipObject.weapons}</div>
-                <div>Offers: {shipObject.purchaseLocations.map((offer, index) =>
-                  <div>{index+1}. {offer.location}: {offer.price}</div>)}</div>
-                <br/>
+                <div key={"ship"+index+1}>
+                  <div>Class: {shipObject.class}</div>
+                  <div>Manufacturer: {shipObject.manufacturer}</div>
+                  <div>Max Cargo: {shipObject.maxCargo}</div>
+                  <div>Plating: {shipObject.plating}</div>
+                  <div>Speed: {shipObject.speed}</div>
+                  <div>Type: {shipObject.type}</div>
+                  <div>Weapons: {shipObject.weapons}</div>
+                  <div>Offers: {shipObject.purchaseLocations.map((offer, index) =>
+                    <div key={"location"+index+1}>{index+1}. {offer.location}: {offer.price}
+                    <div id="purchase-ship"><button onClick={(e) => {
+                      e.preventDefault();
+                      this.purchaseShip(shipObject.type, offer.location);
+                    }}>Purchase</button></div>             
+                    </div>)}
+                  <br/>
+                  </div>
                 </div>
               );
               console.log(shipItems);
@@ -262,29 +307,34 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
             }
           });
             break;
-          case 'get-available-planets':
-            console.log("Getting available planets.");
-            this.network.getAvailableLocations(this.state.token, "PLANET", (result: resultFromHTTP) => {
+          case 'get-all-systems':
+            console.log("Getting all systems.");
+            this.network.getGameInfo("systems", (result: resultFromHTTP) => {
               console.log(result);
               if (result.error) {
                 this.displayErrorMessage(result.error.message);
-              } else if (result.locations) {
-                console.log(result.locations);
-                const locationItems = result.locations.map((locationObject, index) =>
-                  <div>
-                  <div>Name: {locationObject.name}</div>
-                  <div>Symbol: {locationObject.symbol}</div>
-                  <div>Coordinates: [{locationObject.x}, {locationObject.y}]</div>
-                  <br/>
+              } else if (result.systems) {
+                console.log(result.systems);
+                const systemItems = result.systems.map((systemObject, index) =>
+                  <div key={"system"+index+1}>
+                    <div>Name: {systemObject.name}</div>
+                    <div>Locations: {systemObject.locations.map((locationObject, index) =>
+                      <div key={"location"+index+1}>
+                        <div>Name: {locationObject.name}</div>
+                        <div>Symbol: {locationObject.symbol}</div>
+                        <div>Coordinates: [{locationObject.x}, {locationObject.y}]</div>
+                        <br/>
+                    </div>)}
+                    <br/>
+                    </div>
                   </div>
                 );
-                console.log(locationItems);
-                this.setState({resultView: <div>{locationItems}</div>});
+                console.log(systemItems);
+                this.setState({resultView: <div>{systemItems}</div>});
               } else {
                 console.log('No locations found?');
               }
             });
-            break;
             break;
       default:
         console.log('Default click handler reached.');
@@ -294,7 +344,15 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
   takeOutLoan(type: string)
   {
     console.log("Taking out a loan of type " + type);
-    this.network.takeOutLoan(this.state.username, this.state.token, type, (result: resultFromHTTP) => {
+    this.network.performUserAction("loans", {'type': type}, (result: resultFromHTTP) => {
+      console.log(result);
+    });
+  }
+
+  purchaseShip(type: string, location: string)
+  {
+    console.log("Taking out a loan of type " + type + " + at location " + location);
+    this.network.performUserAction("ships", {'location': location, 'type': type}, (result: resultFromHTTP) => {
       console.log(result);
     });
   }
@@ -336,8 +394,12 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
                       onChange={this.handleChange}/>
                     <button value="Submit" onClick={this.handleClick}>Submit</button>
                   </label></li>
-                  <li key="autologin"><label id="autologin">
+                  <li key="defaultlogin"><label id="defaultlogin">
                     Log In Default Account:
+                    <button value="Submit" onClick={this.handleClick}>Submit</button>
+                  </label></li>
+                  <li key="randologin"><label id="randologin">
+                    Log In Random Account:
                     <button value="Submit" onClick={this.handleClick}>Submit</button>
                   </label></li>
                   <li key="get-user-info"><label id="get-user-info">
@@ -352,8 +414,8 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
                     Available Ships:
                     <button value="Submit" onClick={this.handleClick}>Submit</button>
                   </label></li>
-                  <li key="get-available-planets"><label id="get-available-planets">
-                    Available Planets:
+                  <li key="get-all-systems"><label id="get-all-systems">
+                    All Systems:
                     <button value="Submit" onClick={this.handleClick}>Submit</button>
                   </label></li>
                 </ul>
