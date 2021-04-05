@@ -2,8 +2,8 @@ export default class Network
 {
 
     api: string;
-    username: string = null;
-    token: string = null;
+    username: string = '';
+    token: string = '';
 
     public constructor()
     {
@@ -16,7 +16,7 @@ export default class Network
     public Init() : void
     {
 
-    }  
+    }
 
     public authenticateUser(username: string, token: string, callback: Function) : Promise<any> {
       return fetch(this.api + '/users/' + username + '?token=' + token, {
@@ -32,8 +32,8 @@ export default class Network
           }
           else
           {
-            this.username = null;
-            this.token = null;
+            this.username = '';
+            this.token = '';
             callback(data.error.message);
           }
         });

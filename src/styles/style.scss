@@ -116,7 +116,8 @@ body, html {
 .dev-menu {
   text-align: center;
   background-color: white;
-  height: 100vh;
+  z-index: 100;
+  height: auto;
 }
 
 .flex-container {

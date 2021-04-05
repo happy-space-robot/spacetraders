@@ -183,7 +183,7 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
       case 'defaultlogin':
         console.log("Logging in test account.");
         const testUsername = "superawesometestaccount";
-        const testToken = "073a3728-70ea-41e3-9e80-857e293e7d72";
+        const testToken = "c525bf3e-51ba-4195-a3f9-643b8789173f";
         this.network.authenticateUser(testUsername, testToken, (errorMessage: string) => {
           if (errorMessage) {
             this.displayErrorMessage(errorMessage);
@@ -204,7 +204,9 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
           if (result.error) {
             this.displayErrorMessage(result.error.message);
           } else if (result.user) {
-            this.network.authenticateUser(randoUsername, result.token, (errorMessage: string) => {
+            // TODO: Added this to avoid the error, but I'm not sure this was this was the right way
+            // to handle this for the case of an empty token being returned...
+            this.network.authenticateUser(randoUsername, result.token ? result.token : '', (errorMessage: string) => {
               if (errorMessage) {
                 this.displayErrorMessage(errorMessage);
               } else {
@@ -294,7 +296,7 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
                     <div id="purchase-ship"><button onClick={(e) => {
                       e.preventDefault();
                       this.purchaseShip(shipObject.type, offer.location);
-                    }}>Purchase</button></div>             
+                    }}>Purchase</button></div>
                     </div>)}
                   <br/>
                   </div>

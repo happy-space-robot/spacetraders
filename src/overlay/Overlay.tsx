@@ -53,6 +53,11 @@ export default class Overlay
   public CreateDevMenu() : void {
     const overlayElement = document.getElementById('overlay') as Element
     ReactDOM.unmountComponentAtNode(overlayElement);
+    //TODO: get rid of this hacky way of hiding the canvas
+    //or, at least, write in a way to undo it somewhere relevant
+    const c = document.getElementsByTagName('canvas');
+    c[0].style.width = '0';
+    c[0].style.height = '0';
     ReactDOM.render(
       <DevMenu />, overlayElement
     );
