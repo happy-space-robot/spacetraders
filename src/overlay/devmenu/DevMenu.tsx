@@ -101,10 +101,6 @@ type cargoFromHTTP = {
   totalVolume: number
 }
 
-
-
-
-
 export default class DevMenu extends Component<devMenuProps, devMenuState> {
 
   private network: Network;
