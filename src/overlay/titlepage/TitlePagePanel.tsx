@@ -1,7 +1,6 @@
 import React, { MouseEventHandler, useState } from 'react';
 import { TitleBannerComponent } from './TitleBannerComponent';
 import { TitleMenuComponent } from './TitleMenuComponent';
-import gitNetwork from '../../network/Network';
 
 type Props = {
   setScreen: (screen: string) => void;
