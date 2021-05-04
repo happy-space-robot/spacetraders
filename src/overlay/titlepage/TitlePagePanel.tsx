@@ -1,33 +1,30 @@
 import React, { MouseEventHandler, useState } from 'react';
 import { TitleBannerComponent } from './TitleBannerComponent';
 import { TitleMenuComponent } from './TitleMenuComponent';
+import gitNetwork from '../../network/Network';
 
 type Props = {
-  serverStatus: string,
-  clickHandler: MouseEventHandler
+  setScreen: (screen: string) => void;
+  setAuthStatus: (authStatus: boolean) => void;
 }
 
-export const changeTitleMenuMode = (newMode: string) => {
+export const TitlePagePanel = ({ setScreen, setAuthStatus } : Props) => {
 
-}
-
-export const TitlePagePanel = ({ serverStatus, clickHandler }: Props) => {
-
-  let titleMenuDisplay: JSX.Element = <TitleMenuComponent serverStatus={ serverStatus } clickHandler={ clickHandler }/>;
+  let titleMenuDisplay = <div></div>;
 
   const [titleMenuMode, setTitleMenuMode] = useState('title');
 
   if (titleMenuMode === 'login') {
     console.log("Login time.");
   } else {
-    titleMenuDisplay = <TitleMenuComponent serverStatus={ serverStatus } clickHandler={ clickHandler }/>;
+    titleMenuDisplay = <TitleMenuComponent setScreen={ setScreen } setAuthStatus={ setAuthStatus }/>;
   }
 
   return (
     <div className="title-page-outside-container">
       <div className="title-page-inside-container">
         <TitleBannerComponent />
-        {titleMenuDisplay}
+        { titleMenuDisplay }
       </div>
     </div>
   )
