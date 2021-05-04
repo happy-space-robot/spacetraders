@@ -11,12 +11,11 @@ import livereload from 'rollup-plugin-livereload';
 import react from 'react';
 import reactDom from 'react-dom';
 
-
 const isProd = process.env.NODE_ENV === 'production';
 const extensions = ['.js', '.ts', '.tsx'];
 
 export default {
-  input: 'src/main.ts',
+  input: 'src/main.tsx',
   output: {
     file: 'dist/index.js',
     format: 'iife',
