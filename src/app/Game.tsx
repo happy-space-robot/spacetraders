@@ -1,12 +1,10 @@
-import * as THREE from 'three';
-import Overlay from '../overlay/Overlay';
-import React, { MouseEvent } from 'react';
+import React, { MouseEvent, useState, useEffect } from 'react';
 import SceneRenderer from '../render/SceneRenderer';
 import GameView from '../view/GameView';
 import GalacticView from '../view/GalacticView';
 import StellarView from '../view/StellarView';
-import PlanetaryView from '../view/PlanetaryView';
-import Network from '../network/Network';
+import { TitlePagePanel } from '../overlay/titlepage/TitlePagePanel';
+import DevMenu from '../overlay/devmenu/DevMenu';
 
 export enum GameViewType
 {
@@ -16,11 +14,35 @@ export enum GameViewType
     Planetary
 }
 
-export default class Game
+export const Game = () => {
+    let [screen, setScreen] = useState('titlePage');
+    let [authStatus, setAuthStatus] = useState(false);
+
+    let screenToRender = <div></div>;
+
+    const changeScreen = (screenName : string) => {
+        switch(screenName) {
+            case "titlePage":
+                screenToRender = <TitlePagePanel setScreen={ setScreen } setAuthStatus={ setAuthStatus }/>;
+                break;
+            case "devMenu":
+                screenToRender = <DevMenu setScreen={ setScreen } setAuthStatus={ setAuthStatus }/>;
+                break;
+            default:
+                console.log('Default case reached for changeScreen.');
+            }
+    }
+
+    changeScreen(screen);
+
+    return (
+        <div>{ screenToRender }</div>
+    )
+}
+
+class oldGame
 {
     public m_Scene: SceneRenderer;
-    public overlay: Overlay;
-    public network: Network;
 
     private m_LastUpdateTime: number = 0;
 
@@ -35,7 +57,6 @@ export default class Game
     public constructor()
     {
         this.CreateView = this.CreateView.bind(this);
-        this.OverlayClickHandler = this.OverlayClickHandler.bind(this);
 
         this.Update = this.Update.bind(this);
         this.OnResize = this.OnResize.bind(this);
@@ -44,8 +65,6 @@ export default class Game
         this.handleTouchInput = this.handleTouchInput.bind(this);
 
         this.m_Scene = new SceneRenderer();
-        this.overlay = new Overlay(this.OverlayClickHandler);
-        this.network = new Network();
 
         this.m_Views.set(GameViewType.Galactic, new GalacticView);
         this.m_Views.set(GameViewType.Stellar, new StellarView);
@@ -54,8 +73,6 @@ export default class Game
 
     public Init() : void
     {
-        this.overlay.Init();
-
         this.m_Scene.Init();
         document.addEventListener('mousemove', this.handleMouseInput );
         document.addEventListener('mousedown', this.handleMouseInput );
@@ -66,30 +83,6 @@ export default class Game
 
         window.addEventListener( 'resize', this.OnResize );
         window.requestAnimationFrame(this.Update);
-    }
-
-    public OverlayClickHandler(event: MouseEvent) : void
-    {
-      event.preventDefault();
-      switch((event.target as Element).id) {
-        case "login-button":
-          console.log('Log in!');
-          break;
-        case "create-account-button":
-          console.log('Create account!');
-          break;
-        case "start-button":
-          console.log('Start!');
-          this.CreateView();
-          this.overlay.CreateGameOverlay();
-          break;
-        case "goto-dev-menu-button":
-          console.log('Dev menu!');
-          this.overlay.CreateDevMenu();
-          break;
-        default:
-          console.log('Default click handler reached.');
-      }
     }
 
     public CreateView() : void
