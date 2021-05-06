@@ -1,7 +1,7 @@
 import React, { MouseEventHandler } from 'react';
 import ReactDOM from 'react-dom';
 import Network from '../network/Network';
-import { TitlePagePanel } from './titlepage/TitlePagePanel';
+import { TitlePagePanel } from './titlepage/TitleScreen';
 import DevMenu from './devmenu/DevMenu';
 import '../styles/style.scss';
 

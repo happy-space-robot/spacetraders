@@ -34,6 +34,7 @@ export default function TitleMenuComponent ({ setScreen } : Props): JSX.Element 
         break;
       case "start-button":
         console.log('Start!');
+        setScreen('galaxyPage');
         break;
       case "goto-dev-menu-button":
         console.log('Dev menu!');
