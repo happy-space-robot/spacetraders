@@ -1,4 +1,4 @@
-export default class Network
+export class Network
 {
 
     api: string;
