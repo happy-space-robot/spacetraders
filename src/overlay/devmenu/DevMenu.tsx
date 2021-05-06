@@ -1,8 +1,14 @@
-import React, { Component, MouseEvent, ChangeEvent } from 'react';
-import Network from '../../network/Network'
+import React, { useState, Component, MouseEvent, ChangeEvent } from 'react';
+import { Network } from '../../network/Network'
 
-type devMenuProps = {
+const network = new Network;
 
+type Props = {
+  setScreen: (screen: string) => void;
+  setUsername: (username: string) => void;
+  setToken: (token: string) => void;
+  username: string;
+  token: string;
 };
 
 type devMenuState = {
@@ -101,78 +107,63 @@ type cargoFromHTTP = {
   totalVolume: number
 }
 
-export default class DevMenu extends Component<devMenuProps, devMenuState> {
+export const DevMenu = ({ setScreen, setUsername, setToken, username, token } : Props) => {
 
-  private network: Network;
+  const [ resultView, setResultView ] = useState(<div></div>)
+  const [ localUsername, setLocalUsername ] = useState('');
+  const [ localToken, setLocalToken ] = useState('');
 
-  constructor(props: devMenuProps) {
-    super(props);
-    this.state = {
-      username: '',
-      token: '',
-      resultView: <div></div>,
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleClick = this.handleClick.bind(this);
-    this.displayErrorMessage = this.displayErrorMessage.bind(this);
-    this.network = new Network();
-  };
-
-  handleChange(event: ChangeEvent) {
+  const handleChange = (event: ChangeEvent) => {
     event.preventDefault();
-    let stateToChange = '';
-    switch((event.target as Element).id) {
+    switch((event.target).id) {
       case 'new-account-name':
-        stateToChange = 'username';
+        setLocalUsername((event.target as HTMLInputElement).value)
         console.log("Writing to username.")
         break;
       case 'login-name':
-        stateToChange = 'username';
+        setLocalUsername((event.target as HTMLInputElement).value)
         console.log("Writing to loginName.")
         break;
       case 'token':
-        stateToChange = 'token';
+        setLocalToken((event.target as HTMLInputElement).value)
         console.log("Writing to token.")
         break;
       default:
         console.log('Default change handler reached.');
     }
-    // Ideally we could find some way around casting as 'any', but... turns out
-    // dynamic keys are tricky in Typescript
-    this.setState({[stateToChange]: (event.target as HTMLInputElement).value} as any);
   };
 
-  handleClick(event: MouseEvent) : void {
+  const handleClick = (event: MouseEvent) => {
     event.preventDefault();
     switch(((event.target as Node).parentNode as Element).id) {
       case 'create-account':
         console.log("Creating account.");
-        this.network.createUser(this.state.username, (result: resultFromHTTP) => {
+        network.createUser(localUsername, (result: resultFromHTTP) => {
           console.log(result);
           if (result.error) {
-            this.displayErrorMessage(result.error.message);
+            displayErrorMessage(result.error.message);
           } else if (result.user) {
-            this.setState({resultView: (
+            setResultView(
               <div>
-                <div>Username {result.user.username} created!</div>
-                <div>Token: {result.token}</div>
+                <div>Username { result.user.username } created!</div>
+                <div>Token: { result.token }</div>
                 <div>Please save this elsewhere immediately! This will be your only chance.</div>
               </div>
-            )});
+            );
           }
         });
         break;
       case 'login':
         console.log("Logging in.");
-        this.network.authenticateUser(this.state.username, this.state.token, (errorMessage: string) => {
+        network.authenticateUser(localUsername, localToken, (errorMessage: string) => {
           if (errorMessage) {
-            this.displayErrorMessage(errorMessage);
+            displayErrorMessage(errorMessage);
           } else {
-            this.setState({resultView: (
+            setResultView(
               <div>
-                <div>Successfully logged in as {this.state.username}!</div>
+                <div>Successfully logged in as { localUsername }!</div>
               </div>
-            )});
+            );
           }
         });
         break;
@@ -180,37 +171,37 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
         console.log("Logging in test account.");
         const testUsername = "superawesometestaccount";
         const testToken = "c525bf3e-51ba-4195-a3f9-643b8789173f";
-        this.network.authenticateUser(testUsername, testToken, (errorMessage: string) => {
+        network.authenticateUser(testUsername, testToken, (errorMessage: string) => {
           if (errorMessage) {
-            this.displayErrorMessage(errorMessage);
+            displayErrorMessage(errorMessage);
           } else {
-            this.setState({resultView: (
+            setResultView(
               <div>
                 <div>Successfully logged in default test account as {testUsername}!</div>
               </div>
-            )});
+            );
           }
         });
         break;
       case 'randologin':
         console.log("Logging in random account.");
         const randoUsername = "Rando" + Math.floor((Math.random()*1000000));
-        this.network.createUser(randoUsername, (result: resultFromHTTP) => {
+        network.createUser(randoUsername, (result: resultFromHTTP) => {
           console.log(result);
           if (result.error) {
-            this.displayErrorMessage(result.error.message);
+            displayErrorMessage(result.error.message);
           } else if (result.user) {
             // TODO: Added this to avoid the error, but I'm not sure this was this was the right way
             // to handle this for the case of an empty token being returned...
-            this.network.authenticateUser(randoUsername, result.token ? result.token : '', (errorMessage: string) => {
+            network.authenticateUser(randoUsername, result.token ? result.token : '', (errorMessage: string) => {
               if (errorMessage) {
-                this.displayErrorMessage(errorMessage);
+                displayErrorMessage(errorMessage);
               } else {
-                this.setState({resultView: (
+                setResultView (
                   <div>
-                    <div>Successfully logged in default test account as {randoUsername}!</div>
+                    <div>Successfully logged in default test account as { randoUsername }!</div>
                   </div>
-                )});
+                );
               }
             });
           }
@@ -218,53 +209,53 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
         break;
       case 'get-user-info':
         console.log("Getting user info.");
-        this.network.getUserStatus((result: resultFromHTTP) => {
+        network.getUserStatus((result: resultFromHTTP) => {
           console.log(result);
           if (result.error) {
-            this.displayErrorMessage(result.error.message);
+            displayErrorMessage(result.error.message);
           } else if (result.user) {
-            this.setState({resultView: (
+            setResultView (
               <div>
-                <div>Username: {result.user.username}</div>
-                <div>Credits: {result.user.credits}</div>
-                <div>Ships: {result.user.ships.map((ship, index) =>
-                  <div key={"ship"+index+1}>{index+1}. {ship.type} at [{ship.x}, {ship.y}], {ship.spaceAvailable} of {ship.maxCargo} cargo units available</div>)}
+                <div>Username: { result.user.username }</div>
+                <div>Credits: { result.user.credits }</div>
+                <div>Ships: { result.user.ships.map((ship, index) =>
+                  <div key={ "ship"+index+1 }>{ index+1 }. { ship.type } at [{ ship.x }, { ship.y }], { ship.spaceAvailable } of { ship.maxCargo } cargo units available</div>)}
                 </div>
                 <br/>
                 <div>Loans: {result.user.loans.map((loan, index) =>
-                  <div key={"loan"+index+1}>{index+1}. {loan.type}: {loan.repaymentAmount}</div>)}
+                  <div key={ "loan"+index+1 }>{ index+1 }. { loan.type }: { loan.repaymentAmount }</div>)}
                 </div>
                 <br/>
               </div>
-            )});
+            );
           }
         });
         break;
       case 'get-available-loans':
         console.log("Getting available loans.");
-        this.network.getGameInfo("loans", (result: resultFromHTTP) => {
+        network.getGameInfo("loans", (result: resultFromHTTP) => {
           console.log(result);
           if (result.error) {
-            this.displayErrorMessage(result.error.message);
+            displayErrorMessage(result.error.message);
           } else if (result.loans) {
             console.log(result.loans);
             console.log(result.loans[0]);
             console.log(result.loans[0].amount);
             const loanItems = result.loans.map((loanObject, index) =>
-              <div key={"loan"+index+1}>
-                <div>Amount: {loanObject.amount}</div>
-                <div>Collateral Required: {loanObject.collateralRequired.toString()}</div>
-                <div>Rate: {loanObject.rate}</div>
-                <div>Term (in days): {loanObject.termInDays}</div>
-                <div>Type: {loanObject.type}</div>
+              <div key={ "loan" + index + 1 }>
+                <div>Amount: { loanObject.amount }</div>
+                <div>Collateral Required: { loanObject.collateralRequired.toString() }</div>
+                <div>Rate: { loanObject.rate }</div>
+                <div>Term (in days): { loanObject.termInDays }</div>
+                <div>Type: { loanObject.type }</div>
                 <div id="take-out-loan"><button onClick={(e) => {
                   e.preventDefault();
-                  this.takeOutLoan(loanObject.type);
+                  takeOutLoan(loanObject.type);
                 }}>Take Out Loan</button></div>
               </div>
             );
             console.log(loanItems);
-            this.setState({resultView: <div>{loanItems}</div>});
+            setResultView(<div>{ loanItems }</div>);
           } else {
             console.log('No loans found?');
           }
@@ -272,26 +263,26 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
           break;
         case 'get-available-ships':
           console.log("Getting available ships.");
-          this.network.getGameInfo("ships", (result: resultFromHTTP) => {
+          network.getGameInfo("ships", (result: resultFromHTTP) => {
             console.log(result);
             if (result.error) {
-              this.displayErrorMessage(result.error.message);
+              displayErrorMessage(result.error.message);
             } else if (result.ships) {
               console.log(result.ships);
               const shipItems = result.ships.map((shipObject, index) =>
-                <div key={"ship"+index+1}>
-                  <div>Class: {shipObject.class}</div>
-                  <div>Manufacturer: {shipObject.manufacturer}</div>
-                  <div>Max Cargo: {shipObject.maxCargo}</div>
-                  <div>Plating: {shipObject.plating}</div>
-                  <div>Speed: {shipObject.speed}</div>
-                  <div>Type: {shipObject.type}</div>
-                  <div>Weapons: {shipObject.weapons}</div>
-                  <div>Offers: {shipObject.purchaseLocations.map((offer, index) =>
+                <div key={ "ship" + index + 1 }>
+                  <div>Class: { shipObject.class }</div>
+                  <div>Manufacturer: { shipObject.manufacturer }</div>
+                  <div>Max Cargo: { shipObject.maxCargo }</div>
+                  <div>Plating: { shipObject.plating }</div>
+                  <div>Speed: { shipObject.speed }</div>
+                  <div>Type: { shipObject.type }</div>
+                  <div>Weapons: { shipObject.weapons }</div>
+                  <div>Offers: { shipObject.purchaseLocations.map((offer, index) =>
                     <div key={"location"+index+1}>{index+1}. {offer.location}: {offer.price}
                     <div id="purchase-ship"><button onClick={(e) => {
                       e.preventDefault();
-                      this.purchaseShip(shipObject.type, offer.location);
+                      purchaseShip(shipObject.type, offer.location);
                     }}>Purchase</button></div>
                     </div>)}
                   <br/>
@@ -299,7 +290,7 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
                 </div>
               );
               console.log(shipItems);
-              this.setState({resultView: <div>{shipItems}</div>});
+              setResultView(<div>{ shipItems }</div>);
             } else {
               console.log('No ships found?');
             }
@@ -307,20 +298,20 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
             break;
           case 'get-all-systems':
             console.log("Getting all systems.");
-            this.network.getGameInfo("systems", (result: resultFromHTTP) => {
+            network.getGameInfo("systems", (result: resultFromHTTP) => {
               console.log(result);
               if (result.error) {
-                this.displayErrorMessage(result.error.message);
+                displayErrorMessage(result.error.message);
               } else if (result.systems) {
                 console.log(result.systems);
                 const systemItems = result.systems.map((systemObject, index) =>
-                  <div key={"system"+index+1}>
-                    <div>Name: {systemObject.name}</div>
-                    <div>Locations: {systemObject.locations.map((locationObject, index) =>
-                      <div key={"location"+index+1}>
-                        <div>Name: {locationObject.name}</div>
-                        <div>Symbol: {locationObject.symbol}</div>
-                        <div>Coordinates: [{locationObject.x}, {locationObject.y}]</div>
+                  <div key={ "system" + index + 1 }>
+                    <div>Name: { systemObject.name }</div>
+                    <div>Locations: { systemObject.locations.map((locationObject, index) =>
+                      <div key={ "location" + index + 1 }>
+                        <div>Name: { locationObject.name }</div>
+                        <div>Symbol: { locationObject.symbol }</div>
+                        <div>Coordinates: [{ locationObject.x }, { locationObject.y }]</div>
                         <br/>
                     </div>)}
                     <br/>
@@ -328,7 +319,7 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
                   </div>
                 );
                 console.log(systemItems);
-                this.setState({resultView: <div>{systemItems}</div>});
+                setResultView(<div>{systemItems}</div>);
               } else {
                 console.log('No locations found?');
               }
@@ -339,95 +330,91 @@ export default class DevMenu extends Component<devMenuProps, devMenuState> {
     }
   };
 
-  takeOutLoan(type: string)
-  {
+  const takeOutLoan = (type: string) => {
     console.log("Taking out a loan of type " + type);
-    this.network.performUserAction("loans", {'type': type}, (result: resultFromHTTP) => {
+    network.performUserAction("loans", {'type': type}, (result: resultFromHTTP) => {
       console.log(result);
     });
   }
 
-  purchaseShip(type: string, location: string)
-  {
+  const purchaseShip = (type: string, location: string) => {
     console.log("Taking out a loan of type " + type + " + at location " + location);
-    this.network.performUserAction("ships", {'location': location, 'type': type}, (result: resultFromHTTP) => {
+    network.performUserAction("ships", {'location': location, 'type': type}, (result: resultFromHTTP) => {
       console.log(result);
     });
   }
 
-  displayErrorMessage(errorMsg: string) {
-    this.setState({resultView: <div>Error: {errorMsg}</div>});
+  const displayErrorMessage = (errorMsg: string) => {
+    setResultView(<div>Error: {errorMsg}</div>);
   };
 
-  render() {
-    return (
-      <div className="dev-menu">
-        <h1>This is the dev menu!</h1>
-        <div className="flex-container">
-          <div className="dev-menu-content-container">
-            <h3>Options:</h3>
-            <div className="dev-menu-content">
-              <form>
-                <ul className="dev-menu-option-list">
-                  <li key="create-account"><label id="create-account">
-                    Create User:
-                    <input id="new-account-name"
-                      type="text"
-                      name="name"
-                      placeholder="Username"
-                      onChange={this.handleChange}/>
-                    <button value="Submit" onClick={this.handleClick}>Submit</button>
-                  </label></li>
-                  <li key="login"><label id="login">
-                    Log In:
-                    <input id="login-name"
-                      type="text"
-                      name="name"
-                      placeholder="Username"
-                      onChange={this.handleChange}/>
-                    <input id="token"
-                      type="text"
-                      name="token"
-                      placeholder="Token"
-                      onChange={this.handleChange}/>
-                    <button value="Submit" onClick={this.handleClick}>Submit</button>
-                  </label></li>
-                  <li key="defaultlogin"><label id="defaultlogin">
-                    Log In Default Account:
-                    <button value="Submit" onClick={this.handleClick}>Submit</button>
-                  </label></li>
-                  <li key="randologin"><label id="randologin">
-                    Log In Random Account:
-                    <button value="Submit" onClick={this.handleClick}>Submit</button>
-                  </label></li>
-                  <li key="get-user-info"><label id="get-user-info">
-                    User Info:
-                    <button value="Submit" onClick={this.handleClick}>Submit</button>
-                  </label></li>
-                  <li key="get-available-loans"><label id="get-available-loans">
-                    Available Loans:
-                    <button value="Submit" onClick={this.handleClick}>Submit</button>
-                  </label></li>
-                  <li key="get-available-ships"><label id="get-available-ships">
-                    Available Ships:
-                    <button value="Submit" onClick={this.handleClick}>Submit</button>
-                  </label></li>
-                  <li key="get-all-systems"><label id="get-all-systems">
-                    All Systems:
-                    <button value="Submit" onClick={this.handleClick}>Submit</button>
-                  </label></li>
-                </ul>
-              </form>
-            </div>
-          </div>
-          <div className="dev-menu-content-container">
-            <h3>Results:</h3>
-              <div className="dev-menu-content">
-                {this.state.resultView}
-              </div>
+  return (
+    <div className="dev-menu">
+      <h1>This is the dev menu!</h1>
+      <div className="flex-container">
+        <div className="dev-menu-content-container">
+          <h3>Options:</h3>
+          <div className="dev-menu-content">
+            <form>
+              <ul className="dev-menu-option-list">
+                <li key="create-account"><label id="create-account">
+                  Create User:
+                  <input id="new-account-name"
+                    type="text"
+                    name="name"
+                    placeholder="Username"
+                    onChange={ handleChange }/>
+                  <button value="Submit" onClick={ handleClick }>Submit</button>
+                </label></li>
+                <li key="login"><label id="login">
+                  Log In:
+                  <input id="login-name"
+                    type="text"
+                    name="name"
+                    placeholder="Username"
+                    onChange={ handleChange }/>
+                  <input id="token"
+                    type="text"
+                    name="token"
+                    placeholder="Token"
+                    onChange={ handleChange }/>
+                  <button value="Submit" onClick={ handleClick }>Submit</button>
+                </label></li>
+                <li key="defaultlogin"><label id="defaultlogin">
+                  Log In Default Account:
+                  <button value="Submit" onClick={ handleClick }>Submit</button>
+                </label></li>
+                <li key="randologin"><label id="randologin">
+                  Log In Random Account:
+                  <button value="Submit" onClick={ handleClick }>Submit</button>
+                </label></li>
+                <li key="get-user-info"><label id="get-user-info">
+                  User Info:
+                  <button value="Submit" onClick={ handleClick }>Submit</button>
+                </label></li>
+                <li key="get-available-loans"><label id="get-available-loans">
+                  Available Loans:
+                  <button value="Submit" onClick={ handleClick }>Submit</button>
+                </label></li>
+                <li key="get-available-ships"><label id="get-available-ships">
+                  Available Ships:
+                  <button value="Submit" onClick={ handleClick }>Submit</button>
+                </label></li>
+                <li key="get-all-systems"><label id="get-all-systems">
+                  All Systems:
+                  <button value="Submit" onClick={ handleClick }>Submit</button>
+                </label></li>
+              </ul>
+            </form>
           </div>
         </div>
+        <div className="dev-menu-content-container">
+          <h3>Results:</h3>
+            <div className="dev-menu-content">
+              { resultView }
+            </div>
+        </div>
       </div>
-    )
-  };
+    </div>
+  )
 }
