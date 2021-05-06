@@ -4,10 +4,11 @@ import { TitleMenuComponent } from './TitleMenuComponent';
 
 type Props = {
   setScreen: (screen: string) => void;
-  setAuthStatus: (authStatus: boolean) => void;
+  setUsername: (username: string) => void;
+  setToken: (token: string) => void;
 }
 
-export const TitlePagePanel = ({ setScreen, setAuthStatus } : Props) => {
+export const TitlePagePanel = ({ setScreen, setUsername, setToken } : Props) => {
 
   let titleMenuDisplay = <div></div>;
 
@@ -16,7 +17,7 @@ export const TitlePagePanel = ({ setScreen, setAuthStatus } : Props) => {
   if (titleMenuMode === 'login') {
     console.log("Login time.");
   } else {
-    titleMenuDisplay = <TitleMenuComponent setScreen={ setScreen } setAuthStatus={ setAuthStatus }/>;
+    titleMenuDisplay = <TitleMenuComponent setScreen={ setScreen } setUsername={ setUsername } setToken={ setToken }/>;
   }
 
   return (
