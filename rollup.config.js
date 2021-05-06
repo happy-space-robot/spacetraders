@@ -33,7 +33,7 @@ export default {
       namedExports: {
         react: Object.keys(react),
         'react-dom': Object.keys(reactDom),
-      }
+      },
     }),
     babel({
       extensions,

@@ -1,23 +1,21 @@
 import React, { useState, MouseEvent } from 'react';
-import { Network } from '../../network/Network';
+import Network from '../../network/Network';
 
 type Props = {
   setScreen: (screen: string) => void;
-  setUsername: (username: string) => void;
-  setToken: (token: string) => void;
 }
 
-type statusResponse = {
+type StatusResponse = {
   status: string;
 }
 
-export const TitleMenuComponent = ({ setScreen, setUsername, setToken } : Props) => {
+export default function TitleMenuComponent ({ setScreen } : Props): JSX.Element {
 
-  let [serverStatus, setServerStatus] = useState('Getting server status...');
+  const [serverStatus, setServerStatus] = useState('Getting server status...');
 
   const network = new Network();
 
-  network.getStatus((statusMsg : statusResponse) => {
+  network.getStatus((statusMsg : StatusResponse) => {
     if (statusMsg.status === 'spacetraders is currently online and available to play') {
       setServerStatus('SpaceTraders is online and available to play!');
     } else {
@@ -53,11 +51,11 @@ export const TitleMenuComponent = ({ setScreen, setUsername, setToken } : Props)
           <p>{ serverStatus }</p>
         </div>
         <ul className="login-menu-button-list">
-          <li><button id="login-button" className="title-menu-button" onClick= { clickHandler }>Log In</button></li>
-          <li><button id="create-account-button" className="title-menu-button" onClick= { clickHandler }>Create Account</button></li>
+          <li><button type="button" id="login-button" className="title-menu-button" onClick= { clickHandler }>Log In</button></li>
+          <li><button type="button" id="create-account-button" className="title-menu-button" onClick= { clickHandler }>Create Account</button></li>
           {/* Start button should be disabled and opacity 0.5 or something to start. */}
-          <li><button id="start-button" className="title-menu-button" onClick= { clickHandler }>Start</button></li>
-          <li><button id="goto-dev-menu-button" className="title-menu-button" onClick= { clickHandler }>Dev Menu</button></li>
+          <li><button type="button" id="start-button" className="title-menu-button" onClick= { clickHandler }>Start</button></li>
+          <li><button type="button" id="goto-dev-menu-button" className="title-menu-button" onClick= { clickHandler }>Dev Menu</button></li>
         </ul>
       </div>
     </div>

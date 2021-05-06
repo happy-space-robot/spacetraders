@@ -1,14 +1,12 @@
-import React, { MouseEventHandler, useState } from 'react';
-import { TitleBannerComponent } from './TitleBannerComponent';
-import { TitleMenuComponent } from './TitleMenuComponent';
+import React, { useState } from 'react';
+import TitleBannerComponent from './TitleBannerComponent';
+import TitleMenuComponent from './TitleMenuComponent';
 
 type Props = {
   setScreen: (screen: string) => void;
-  setUsername: (username: string) => void;
-  setToken: (token: string) => void;
 }
 
-export const TitlePagePanel = ({ setScreen, setUsername, setToken } : Props) => {
+export default function TitlePagePanel ({ setScreen } : Props): JSX.Element {
 
   let titleMenuDisplay = <div></div>;
 
@@ -17,7 +15,7 @@ export const TitlePagePanel = ({ setScreen, setUsername, setToken } : Props) => 
   if (titleMenuMode === 'login') {
     console.log("Login time.");
   } else {
-    titleMenuDisplay = <TitleMenuComponent setScreen={ setScreen } setUsername={ setUsername } setToken={ setToken }/>;
+    titleMenuDisplay = <TitleMenuComponent setScreen={ setScreen } />;
   }
 
   return (
