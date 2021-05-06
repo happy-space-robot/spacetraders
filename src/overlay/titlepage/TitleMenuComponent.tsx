@@ -1,16 +1,17 @@
 import React, { useState, MouseEvent } from 'react';
-import Network from '../../network/Network';
+import { Network } from '../../network/Network';
 
 type Props = {
   setScreen: (screen: string) => void;
-  setAuthStatus: (authStatus: boolean) => void;
+  setUsername: (username: string) => void;
+  setToken: (token: string) => void;
 }
 
 type statusResponse = {
   status: string;
 }
 
-export const TitleMenuComponent = ({ setScreen, setAuthStatus } : Props) => {
+export const TitleMenuComponent = ({ setScreen, setUsername, setToken } : Props) => {
 
   let [serverStatus, setServerStatus] = useState('Getting server status...');
 
