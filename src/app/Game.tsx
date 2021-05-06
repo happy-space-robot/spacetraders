@@ -4,7 +4,8 @@ import GameView from '../view/GameView';
 import GalacticView from '../view/GalacticView';
 import StellarView from '../view/StellarView';
 import { TitlePagePanel } from '../overlay/titlepage/TitlePagePanel';
-import DevMenu from '../overlay/devmenu/DevMenu';
+import { DevMenu } from '../overlay/devmenu/DevMenu';
+import { Network } from '../network/Network';
 
 export enum GameViewType
 {
@@ -15,18 +16,19 @@ export enum GameViewType
 }
 
 export const Game = () => {
-    let [screen, setScreen] = useState('titlePage');
-    let [authStatus, setAuthStatus] = useState(false);
+    const [screen, setScreen] = useState('titlePage');
+    const [username, setUsername] = useState('');
+    const [token, setToken] = useState('');
 
     let screenToRender = <div></div>;
 
     const changeScreen = (screenName : string) => {
         switch(screenName) {
             case "titlePage":
-                screenToRender = <TitlePagePanel setScreen={ setScreen } setAuthStatus={ setAuthStatus }/>;
+                screenToRender = <TitlePagePanel setScreen={ setScreen } setUsername={ setUsername } setToken={ setToken }/>;
                 break;
             case "devMenu":
-                screenToRender = <DevMenu setScreen={ setScreen } setAuthStatus={ setAuthStatus }/>;
+                screenToRender = <DevMenu setScreen={ setScreen } setUsername={ setUsername } setToken={ setToken } username={ username } token={ token }/>;
                 break;
             default:
                 console.log('Default case reached for changeScreen.');
