@@ -3,13 +3,16 @@ import Network from '../../network/Network';
 
 type Props = {
   setScreen: (screen: string) => void;
+  setLoggedIn: (loggedIn: boolean) => void;
+  loggedIn: boolean;
+  setTitleMenuMode: (titleMenuMode: string) => void;
 }
 
 type StatusResponse = {
   status: string;
 }
 
-export default function TitleMenuComponent ({ setScreen } : Props): JSX.Element {
+export default function TitleMenuComponent ({ setScreen, setLoggedIn, loggedIn, setTitleMenuMode } : Props): JSX.Element {
 
   const [serverStatus, setServerStatus] = useState('Getting server status...');
 
@@ -28,6 +31,7 @@ export default function TitleMenuComponent ({ setScreen } : Props): JSX.Element 
     switch((event.target as Element).id) {
       case "login-button":
         console.log('Log in!');
+        setTitleMenuMode('login');
         break;
       case "create-account-button":
         console.log('Create account!');
@@ -55,7 +59,7 @@ export default function TitleMenuComponent ({ setScreen } : Props): JSX.Element 
           <li><button type="button" id="login-button" className="title-menu-button" onClick= { clickHandler }>Log In</button></li>
           <li><button type="button" id="create-account-button" className="title-menu-button" onClick= { clickHandler }>Create Account</button></li>
           {/* Start button should be disabled and opacity 0.5 or something to start. */}
-          <li><button type="button" id="start-button" className="title-menu-button" onClick= { clickHandler }>Start</button></li>
+          <li><button disabled={!loggedIn} type="button" id="start-button" className="title-menu-button" onClick= { clickHandler }>Start</button></li>
           <li><button type="button" id="goto-dev-menu-button" className="title-menu-button" onClick= { clickHandler }>Dev Menu</button></li>
         </ul>
       </div>

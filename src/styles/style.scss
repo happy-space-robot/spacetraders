@@ -47,6 +47,11 @@ body, html {
   margin-top: 20px;
 }
 
+.status-view {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 .title-menu-outside-container {
   margin-top: 2em;
   grid-column: 2;
@@ -65,11 +70,6 @@ body, html {
   border-radius: 20px;
   border-width: 2px;
   text-align: center;
-}
-
-.status-view {
-  margin-left: 10px;
-  margin-right: 10px;
 }
 
 .title-menu-inside-container ul {
@@ -95,13 +95,27 @@ body, html {
   font-weight: 900;
 }
 
-// #start-button {
-//   opacity: 0.5;
-// }
+#start-button:disabled {
+   opacity: 0.5;
+}
+
+#start-button:disabled:hover {
+    background-color: inherit;
+    color: inherit;
+}
+
 
 .title-menu-inside-container button:hover {
   background-color: green;
   color: black;
+}
+
+.bkg-black {
+  background-color: black;
+}
+
+.text-color-green {
+  color: green;
 }
 
 .status-view {

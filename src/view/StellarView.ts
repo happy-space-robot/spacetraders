@@ -31,7 +31,7 @@ export default class StellarView extends GameView
 
         this.UpdatePlayer(currentTime);
     }
-    
+
     // Returns true if input was handled. Implemented by derived classes
     public OnCursorPress(x: number, y: number) : boolean
     {
@@ -46,7 +46,7 @@ export default class StellarView extends GameView
 
         return super.OnCursorPress(x, y);
     }
-    
+
 
     private InitPlayer()
     {
