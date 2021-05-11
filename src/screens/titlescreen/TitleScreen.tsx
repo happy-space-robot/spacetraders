@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import TitleBannerComponent from './TitleBannerComponent';
 import TitleMenuComponent from './TitleMenuComponent';
 import LoginComponent from './LoginComponent';
+import CreateAccountComponent from './CreateAccountComponent';
 
 type Props = {
   setScreen: (screen: string) => void;
@@ -17,9 +18,11 @@ export default function TitlePagePanel ({ setScreen, setLoggedIn, loggedIn } : P
 
   if (titleMenuMode === 'login') {
     console.log("Login time.");
-    titleMenuDisplay = <LoginComponent setLoggedIn={setLoggedIn} setTitleMenuMode={setTitleMenuMode}/>
-  } else if (titleMenuMode === 'title') {
-    titleMenuDisplay = <TitleMenuComponent setScreen={ setScreen } setLoggedIn={setLoggedIn} loggedIn={loggedIn} setTitleMenuMode={setTitleMenuMode}/>;
+    titleMenuDisplay = <LoginComponent setLoggedIn={setLoggedIn} loggedIn={loggedIn} setTitleMenuMode={setTitleMenuMode}/>
+  } else if (titleMenuMode === 'create-account') {
+    titleMenuDisplay = <CreateAccountComponent setLoggedIn={setLoggedIn} loggedIn={loggedIn} setTitleMenuMode={setTitleMenuMode}/>;
+  }else if (titleMenuMode === 'title') {
+    titleMenuDisplay = <TitleMenuComponent setScreen={setScreen} setLoggedIn={setLoggedIn} loggedIn={loggedIn} setTitleMenuMode={setTitleMenuMode}/>;
   }
 
   return (
