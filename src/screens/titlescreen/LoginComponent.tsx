@@ -3,12 +3,13 @@ import Network from "../../network/Network";
 
 type Props = {
   setLoggedIn: (loggedIn: boolean) => void;
+  loggedIn: boolean;
   setTitleMenuMode: (titleMenuMode: string) => void;
 }
 
-export default function LoginComponent ({ setLoggedIn, setTitleMenuMode } : Props): JSX.Element {
+export default function LoginComponent ({ setLoggedIn, setTitleMenuMode, loggedIn } : Props): JSX.Element {
 
-  const [resultView, setResultView] = useState(<div />);
+  const [resultView, setResultView] = useState(<div>Please enter your username and token above to continue.</div>);
   const [inputUsername, setInputUsername] = useState('');
   const [inputToken, setInputToken] = useState('');
 
@@ -44,6 +45,7 @@ export default function LoginComponent ({ setLoggedIn, setTitleMenuMode } : Prop
         if (errorMessage) {
           displayErrorMessage(errorMessage);
         } else {
+          setLoggedIn(true);
           setResultView(
             <div>
               <div>Successfully logged in as {inputUsername}!</div>
@@ -59,40 +61,57 @@ export default function LoginComponent ({ setLoggedIn, setTitleMenuMode } : Prop
     setTitleMenuMode('title');
   };
 
+  const handleContinue = (event: MouseEvent) => {
+    event.preventDefault;
+    setTitleMenuMode('title');
+  };
+
   return (
     <div className="title-menu-outside-container">
       <div className="title-menu-inside-container bkg-black text-color-green">
-        <form>
-          <ul className="login-menu-option-list">
-            <li key="login">
-            <label id="login">
-              Log In:
-              <input
-                id="login-name"
-                type="text"
-                name="name"
-                placeholder="Username"
-                onChange={handleChange}
-              />
-              Token:
-              <input
-                id="token"
-                type="text"
-                name="token"
-                placeholder="Token"
-                onChange={handleChange}
-              />
-              <button value="Submit" onClick={handleSubmit}>
-                Submit
-              </button>
-            </label>
-            </li>
-          </ul>
-        </form>
-        <button value="Back" onClick={handleBack}>
-          Back
-        </button>
+        <h3>Log In:</h3>
+        <div className="form-container">
+          <form>
+            <ul className="login-menu-option-list">
+              <li key="login">
+                <label id="login">
+                  Username:
+                </label>
+                <input
+                    id="login-name"
+                    type="text"
+                    name="name"
+                    placeholder="Username"
+                    onChange={handleChange}
+                  />
+              </li>
+              <li>
+                <label id="token">
+                  Token:
+                </label>
+                <input
+                    id="token"
+                    type="text"
+                    name="token"
+                    placeholder="Token"
+                    onChange={handleChange}
+                  />
+              </li>
+            </ul>
+          </form>
+        </div>
         <div className="login-menu-content">{resultView}</div>
+        <div className="login-button-container">
+          <button className="menu-button login-menu-button" value="Back" onClick={handleBack}>
+            Back
+          </button>
+          <button className="menu-button login-menu-button" value="Submit" onClick={handleSubmit}>
+            Submit
+          </button>
+          <button className="menu-button login-menu-button" value="Continue" disabled={!loggedIn} onClick={handleContinue}>
+            Continue
+          </button>
+        </div>
       </div>
     </div>
   )
