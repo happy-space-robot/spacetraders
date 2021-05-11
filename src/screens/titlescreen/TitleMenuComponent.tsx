@@ -35,6 +35,7 @@ export default function TitleMenuComponent ({ setScreen, setLoggedIn, loggedIn, 
         break;
       case "create-account-button":
         console.log('Create account!');
+        setTitleMenuMode('create-account');
         break;
       case "start-button":
         console.log('Start!');
@@ -49,18 +50,19 @@ export default function TitleMenuComponent ({ setScreen, setLoggedIn, loggedIn, 
     }
   }
 
+  let loginText = loggedIn ? "Log In Again" : "Log In";
+
   return (
     <div className="title-menu-outside-container">
       <div className="title-menu-inside-container">
         <div className="status-view">
-          <p>{ serverStatus }</p>
+          <p>{serverStatus}</p>
         </div>
-        <ul className="login-menu-button-list">
-          <li><button type="button" id="login-button" className="title-menu-button" onClick= { clickHandler }>Log In</button></li>
-          <li><button type="button" id="create-account-button" className="title-menu-button" onClick= { clickHandler }>Create Account</button></li>
-          {/* Start button should be disabled and opacity 0.5 or something to start. */}
-          <li><button disabled={!loggedIn} type="button" id="start-button" className="title-menu-button" onClick= { clickHandler }>Start</button></li>
-          <li><button type="button" id="goto-dev-menu-button" className="title-menu-button" onClick= { clickHandler }>Dev Menu</button></li>
+        <ul className="title-menu-button-list">
+          <li><button disabled={!loggedIn} type="button" id="start-button" className="menu-button title-menu-button" onClick={clickHandler}>Start</button></li>
+          <li><button type="button" id="login-button" className="menu-button title-menu-button" onClick={clickHandler}>{loginText}</button></li>
+          <li><button type="button" id="create-account-button" className="menu-button title-menu-button" onClick={clickHandler}>Create Account</button></li>
+          <li><button type="button" id="goto-dev-menu-button" className="menu-button title-menu-button" onClick={clickHandler}>Dev Menu</button></li>
         </ul>
       </div>
     </div>
