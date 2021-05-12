@@ -57,12 +57,12 @@ export default function LoginComponent ({ setLoggedIn, setTitleMenuMode, loggedI
   };
 
   const handleBack = (event: MouseEvent) => {
-    event.preventDefault;
+    event.preventDefault();
     setTitleMenuMode('title');
   };
 
   const handleContinue = (event: MouseEvent) => {
-    event.preventDefault;
+    event.preventDefault();
     setTitleMenuMode('title');
   };
 
