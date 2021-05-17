@@ -5,13 +5,14 @@ import GalaxyPagePanel from "../screens/galaxyscreen/GalaxyScreen";
 
 export const Game = (): JSX.Element => {
   const [screen, setScreen] = useState("titlePage");
+  const [loggedIn, setLoggedIn] = useState(false);
 
   let screenToRender = <div />;
 
   const changeScreen = (screenName: string) => {
     switch (screenName) {
       case "titlePage":
-        screenToRender = <TitlePagePanel setScreen={setScreen} />;
+        screenToRender = <TitlePagePanel setScreen={setScreen} setLoggedIn={setLoggedIn} loggedIn={loggedIn}/>;
         break;
       case "devMenu":
         screenToRender = <DevMenu setScreen={setScreen} />;

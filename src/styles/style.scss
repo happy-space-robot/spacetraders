@@ -47,6 +47,11 @@ body, html {
   margin-top: 20px;
 }
 
+.status-view {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 .title-menu-outside-container {
   margin-top: 2em;
   grid-column: 2;
@@ -67,11 +72,6 @@ body, html {
   text-align: center;
 }
 
-.status-view {
-  margin-left: 10px;
-  margin-right: 10px;
-}
-
 .title-menu-inside-container ul {
   list-style-type: none;
   padding: 0;
@@ -82,26 +82,42 @@ body, html {
   margin-bottom: 10px;
 }
 
-.title-menu-inside-container button {
+.title-menu-button {
+  padding: 1em;
+  font-size: 16px;
+  width: 12em;
+}
+
+.menu-button {
   margin-top: 10px;
   background-color: rgba(0, 0, 0, 0.8);
   border: 2px solid green;
   border-radius: 8px;
   color: green;
-  padding: 1em;
-  font-size: 16px;
-  width: 12em;
   font-family: 'Courier New', Courier, monospace;
   font-weight: 900;
 }
 
-// #start-button {
-//   opacity: 0.5;
-// }
+.menu-button:disabled {
+   opacity: 0.5;
+}
 
-.title-menu-inside-container button:hover {
+.menu-button:disabled:hover {
+    background-color: inherit;
+    color: green;
+}
+
+.menu-button:hover {
   background-color: green;
   color: black;
+}
+
+.bkg-black {
+  background-color: black;
+}
+
+.text-color-green {
+  color: green;
 }
 
 .status-view {
@@ -139,3 +155,36 @@ body, html {
   padding: 0;
   margin: 0;
 }
+
+.login-menu-option-list :first-child {
+  margin-top: 1em;
+}
+
+.login-menu-option-list label {
+  padding-right: 0.5em;
+}
+
+.login-menu-option-list {
+  text-align: right;
+}
+
+.form-container {
+  width: 16em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.login-button-container {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.login-menu-button {
+  padding: 0.6em;
+  font-size: 14px;
+  width: 8em;
+}
+
+

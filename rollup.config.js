@@ -84,8 +84,8 @@ export default {
     }),
     image(),
     scss({
-      output: './dist/style.css',
-      watch: './src/styles'
+      output: 'dist/style.css',
+      watch: 'src/styles'
     }),
     (isProd && terser()),
     (isProd && serve({
