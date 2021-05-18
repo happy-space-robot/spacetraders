@@ -7,27 +7,16 @@ export default class SceneRenderer
     private m_Renderer: THREE.WebGLRenderer;
     private m_Viewport = new THREE.Box2();
 
-    public static get Instance() { return this.s_Instance; }
-    private static s_Instance: SceneRenderer;
-
     public get Camera() : THREE.PerspectiveCamera { return this.m_Camera; }
 
-    public constructor()
-    {
-        console.assert(SceneRenderer.s_Instance == null);
-        SceneRenderer.s_Instance = this;
-    }
+    public get CanvasElement() : HTMLCanvasElement { return this.m_Renderer.domElement; }
 
-    public Init() : void
+    public constructor()
     {
         this.m_Renderer = new THREE.WebGLRenderer({ antialias: true });
         //this.m_Renderer.setPixelRatio( window.devicePixelRatio );
         this.m_Renderer.setSize( window.innerWidth, window.innerHeight );
         this.m_Renderer.setClearColor(new THREE.Color(0x000000));
-
-        const container = document.createElement( 'div' );
-        document.body.appendChild( container );
-        container.appendChild( this.m_Renderer.domElement );
 
         this.m_Camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
         this.m_Camera.position.set( 0, 0, 200 );
@@ -44,14 +33,14 @@ export default class SceneRenderer
         this.m_Scene.add(object);
     }
 
-    public RemoveFromScene(object: THREE.Object3D, cleanupObject: boolean)
+    public RemoveFromScene(object: THREE.Mesh, cleanupObject: boolean)
     {
         this.m_Scene.remove(object);
         
         if(cleanupObject)
         {
             object.geometry.dispose();
-            object.material.dispose();
+            (object.material as THREE.Material).dispose();
         }
     }
 

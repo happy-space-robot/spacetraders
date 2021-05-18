@@ -2,8 +2,13 @@ import React, { useState } from "react";
 import TitlePagePanel from "../screens/titlescreen/TitleScreen";
 import DevMenu from "../screens/devmenu/DevMenu";
 import GalaxyPagePanel from "../screens/galaxyscreen/GalaxyScreen";
+import SceneRenderer from "../render/SceneRenderer";
 
-export const Game = (): JSX.Element => {
+type Props = {
+  renderer: SceneRenderer;
+}
+
+export const Game = ({renderer} : Props): JSX.Element => {
   const [screen, setScreen] = useState("titlePage");
   const [loggedIn, setLoggedIn] = useState(false);
 
@@ -18,7 +23,7 @@ export const Game = (): JSX.Element => {
         screenToRender = <DevMenu setScreen={setScreen} />;
         break;
       case "galaxyPage":
-        screenToRender = <GalaxyPagePanel setScreen={setScreen}/>;
+        screenToRender = <GalaxyPagePanel renderer={renderer} setScreen={setScreen}/>;
         break;
       default:
         console.log("Default case reached for changeScreen.");

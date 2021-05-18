@@ -24,7 +24,7 @@ export default class RenderGame {
     return this.m_Views.get(this.m_CurrentViewType);
   }
 
-  public constructor() {
+  public constructor(scene: SceneRenderer) {
     this.CreateView = this.CreateView.bind(this);
 
     this.Update = this.Update.bind(this);
@@ -33,7 +33,7 @@ export default class RenderGame {
     this.handleMouseInput = this.handleMouseInput.bind(this);
     this.handleTouchInput = this.handleTouchInput.bind(this);
 
-    this.m_Scene = new SceneRenderer();
+    this.m_Scene = scene;
 
     this.m_Views.set(GameViewType.Galactic, new GalacticView());
     this.m_Views.set(GameViewType.Stellar, new StellarView());
@@ -41,7 +41,6 @@ export default class RenderGame {
   }
 
   public Init(): void {
-    this.m_Scene.Init();
     document.addEventListener("mousemove", this.handleMouseInput);
     document.addEventListener("mousedown", this.handleMouseInput);
     document.addEventListener("mouseup", this.handleMouseInput);
