@@ -3,7 +3,7 @@ import SceneRenderer from '../render/SceneRenderer';
 
 export default abstract class GameView
 {
-    private m_Scene: SceneRenderer;
+    private m_Scene: SceneRenderer = null;
     protected m_SceneObjects = new Array<THREE.Mesh>();
 
     // Initializes the game view from a definition structure

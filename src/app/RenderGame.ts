@@ -41,6 +41,17 @@ export default class RenderGame {
   }
 
   public Init(): void {
+    
+    // TODO JI: This seems messy, but the issue here is that we can't initialize the OpenGL
+    // renderer until after some other important initialization occurs. And the failure seems
+    // to be browser-specific, which is fun (ex: Chrome works but Brave fails, which is funny
+    // because they're basically the same thing). So, we lazily initialize the scene until a
+    // view needs it. Would be good to think through the initialization flow a little more here.
+    if(!this.m_Scene.IsInitialized())
+    {
+      this.m_Scene.Initialize();
+    }
+
     document.addEventListener("mousemove", this.handleMouseInput);
     document.addEventListener("mousedown", this.handleMouseInput);
     document.addEventListener("mouseup", this.handleMouseInput);
@@ -53,6 +64,7 @@ export default class RenderGame {
   }
 
   public CreateView(): void {
+    
     // TODO: This is placeholder for now, eventually we'll want to drive the correct
     // view based on player selection.
     const planetaryData = StellarView.GetPlanetaryData();

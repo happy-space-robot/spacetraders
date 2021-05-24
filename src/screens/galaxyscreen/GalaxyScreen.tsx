@@ -15,9 +15,9 @@ export default function GalaxyPagePanel ({ renderer, setScreen } : Props): JSX.E
 
   useEffect(() => {
     const parent = document.getElementById('gameViewContainer');
-    if(parent.childElementCount == 0)
+    if(parent?.childElementCount == 0)
     {
-      parent.parentNode.appendChild(renderer.CanvasElement);
+      parent.parentNode?.appendChild(renderer.CanvasElement);
     }
     });
 

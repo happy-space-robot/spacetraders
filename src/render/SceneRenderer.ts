@@ -6,13 +6,25 @@ export default class SceneRenderer
     private m_Camera: THREE.PerspectiveCamera;
     private m_Renderer: THREE.WebGLRenderer;
     private m_Viewport = new THREE.Box2();
+    private m_Initialized: boolean = false;
 
     public get Camera() : THREE.PerspectiveCamera { return this.m_Camera; }
 
     public get CanvasElement() : HTMLCanvasElement { return this.m_Renderer.domElement; }
 
+    public IsInitialized() : boolean
+    {
+        return this.m_Initialized;
+    }
+
     public constructor()
     {
+    }
+
+    public Initialize()
+    {
+        console.assert(!this.m_Initialized);
+
         this.m_Renderer = new THREE.WebGLRenderer({ antialias: true });
         //this.m_Renderer.setPixelRatio( window.devicePixelRatio );
         this.m_Renderer.setSize( window.innerWidth, window.innerHeight );
@@ -26,6 +38,8 @@ export default class SceneRenderer
         this.m_Scene.fog = new THREE.Fog( 0x0000a0, 50, 300 );
 
         this.InitLighting();
+
+        this.m_Initialized = true;
     }
 
     public AddToScene(object: THREE.Object3D)
