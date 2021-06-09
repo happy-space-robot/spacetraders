@@ -63,11 +63,11 @@ export default class RenderGame {
     window.requestAnimationFrame(this.Update);
   }
 
-  public CreateView(): void {
+  public CreateView(planetaryData: any): void {
     
     // TODO: This is placeholder for now, eventually we'll want to drive the correct
     // view based on player selection.
-    const planetaryData = StellarView.GetPlanetaryData();
+    //const planetaryData = StellarView.GetPlanetaryData();
     this.ActivateView(GameViewType.Stellar, planetaryData);
   }
 

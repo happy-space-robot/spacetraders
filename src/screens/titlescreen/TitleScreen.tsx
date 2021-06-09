@@ -8,9 +8,10 @@ type Props = {
   setScreen: (screen: string) => void;
   setLoggedIn: (loggedIn: boolean) => void;
   loggedIn: boolean;
+  setCurrentSystem: (systemInfo: any) => void;
 }
 
-export default function TitlePagePanel ({ setScreen, setLoggedIn, loggedIn } : Props): JSX.Element {
+export default function TitlePagePanel ({ setScreen, setLoggedIn, loggedIn, setCurrentSystem } : Props): JSX.Element {
 
   let titleMenuDisplay = <div></div>;
 
@@ -22,7 +23,7 @@ export default function TitlePagePanel ({ setScreen, setLoggedIn, loggedIn } : P
   } else if (titleMenuMode === 'create-account') {
     titleMenuDisplay = <CreateAccountComponent setLoggedIn={setLoggedIn} loggedIn={loggedIn} setTitleMenuMode={setTitleMenuMode}/>;
   }else if (titleMenuMode === 'title') {
-    titleMenuDisplay = <TitleMenuComponent setScreen={setScreen} setLoggedIn={setLoggedIn} loggedIn={loggedIn} setTitleMenuMode={setTitleMenuMode}/>;
+    titleMenuDisplay = <TitleMenuComponent setScreen={setScreen} setLoggedIn={setLoggedIn} loggedIn={loggedIn} setTitleMenuMode={setTitleMenuMode} setCurrentSystem={setCurrentSystem}/>;
   }
 
   return (

@@ -4,14 +4,16 @@ import SceneRenderer from "../../render/SceneRenderer";
 
 type Props = {
   renderer: SceneRenderer;
-  setScreen: (screen: string) => void;
+  systemInfo: any;
 }
 
-export default function GalaxyPagePanel ({ renderer, setScreen } : Props): JSX.Element {
+export default function GalaxyPagePanel ({ renderer, systemInfo } : Props): JSX.Element {
+  
+  let planets = systemInfo.locations.filter((e: any) => {return true;}); /* allow everything right now*/ //e.type=="PLANET";});
 
   const renderGame = new RenderGame(renderer);
   renderGame.Init();
-  renderGame.CreateView();
+  renderGame.CreateView(planets);
 
   useEffect(() => {
     const parent = document.getElementById('gameViewContainer');
@@ -22,9 +24,6 @@ export default function GalaxyPagePanel ({ renderer, setScreen } : Props): JSX.E
     });
 
   return <div>
-    <div>
-    STUFF GOES HERE!
-    </div>
     <div>
       <div id="gameViewContainer" ></div>
     </div>

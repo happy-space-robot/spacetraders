@@ -14,7 +14,7 @@ export default class StellarView extends GameView
     {
         super.Init(scene, jsonDef);
 
-        for(let planetDef of jsonDef.planets)
+        for(let planetDef of jsonDef)
         {
             let planet = new Planet(planetDef);
             this.AddObject(planet.VisualObject);
@@ -37,7 +37,7 @@ export default class StellarView extends GameView
     {
         for(let p of this.m_Planets)
         {
-            if(p.Pick(x, y))
+            if(p.Pick(x, y, this.m_Scene))
             {
                 this.MovePlayerToPlanet(p);
                 return true;
@@ -59,7 +59,10 @@ export default class StellarView extends GameView
 
     private MovePlayerToPlanet(planet: Planet)
     {
-        console.error("Debug: Moved to planet " + planet.m_Name);
+        let typeName = "planet";
+        if(planet.)
+
+        console.error("Debug: Moved to " + planet.m_Type + " " + planet.m_Name);
         this.m_CurrentPlanet = planet;
     }
 
